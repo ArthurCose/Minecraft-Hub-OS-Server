@@ -4,7 +4,9 @@ local Blocks = require("scripts/minecraft/blocks")
 
 local Occlusion = {}
 
+-- chebyshev distance
 local SPAWN_RANGE = 5
+local DESPAWN_RANGE = 5
 
 function Occlusion:new(player)
   local occlusion = {
@@ -139,6 +141,29 @@ function Occlusion:update_around(int_x, int_y, int_z)
   end
 end
 
+
+function Occlusion:despawn_out_of_range(int_z)
+  local bot_layer = self.bot_layers[int_z]
+
+  if not bot_layer then
+    return
+  end
+
+  local pending_removal = {}
+
+  for i, pillar in ipairs(bot_layer) do
+    local chebyshev_distance = math.max(math.abs(pillar.int_x - self.player.int_x), math.abs(pillar.int_y - self.player.int_y))
+
+    if chebyshev_distance > DESPAWN_RANGE then
+      pending_removal[#pending_removal+1] = i
+    end
+  end
+
+  for i = #pending_removal, 1, -1 do
+    table.remove(bot_layer, pending_removal[i])
+  end
+end
+
 function Occlusion:handle_player_move(player)
   local same_position = (
     self.last_int_x == player.int_x and
@@ -160,6 +185,8 @@ function Occlusion:handle_player_move(player)
   self.last_int_z = player.int_z
 
   self:update_around(player.int_x, player.int_y, player.int_z)
+
+  self:despawn_out_of_range(player.int_z)
 end
 
 return Occlusion
