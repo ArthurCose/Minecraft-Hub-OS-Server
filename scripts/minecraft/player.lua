@@ -3,8 +3,15 @@ local Blocks = require("scripts/minecraft/blocks")
 local Player = {}
 
 local Menu = {
-  INVENTORY = 0,
+  ACTIONS = 0,
+  INVENTORY = 1,
   COLOR = { r = 139, g = 139, b = 139 }
+}
+
+local Action = {
+  PUNCH = 0,
+  JUMP = 1,
+  ITEM = 2,
 }
 
 function Player:new(player_id)
@@ -17,6 +24,7 @@ function Player:new(player_id)
     -- starting items
       { id = "COBBLESTONE", count = 8 }
     },
+    action = Action.PUNCH,
     selected_item = nil,
     x = 0,
     y = 0,
@@ -72,14 +80,16 @@ function Player:handle_tile_interaction(x, y, z, button)
   y = math.floor(y) + .5
 
   if button == 1 then
-    self:open_inventory()
+    self:open_menu()
     return
   end
 
-  if self.selected_item == nil then
-    self:break_block(x, y, z)
-  elseif Blocks[self.selected_item.id] then
-    self:place_block(x, y, z)
+  if self.action == Action.JUMP then
+    self:try_jump_up(x, y, z)
+  elseif self.action == Action.PUNCH then
+    self:try_break_block(x, y, z)
+  elseif self.action == Action.ITEM then
+    self:try_place_block(x, y, z)
   end
 end
 
@@ -105,18 +115,24 @@ local function place_block(player, x, y, z)
   if player.instance.world:set_block(x, y, z, block) then
     consume_item(player)
     player:lockout()
+    return true
   end
+
+  return false
 end
 
-function Player:place_block(x, y, z)
-  local block = Blocks[self.selected_item.id]
-
-  if not block then
+function Player:try_place_block(x, y, z)
+  if not self.selected_item then
+    -- nothing to place
     return
   end
 
-  local float_x = x
-  local float_y = y
+  local block = Blocks[self.selected_item.id]
+
+  if not block then
+    -- not placeable
+    return
+  end
 
   x = math.floor(x)
   y = math.floor(y)
@@ -128,44 +144,44 @@ function Player:place_block(x, y, z)
   local floor_id = world:get_block(x, y, z - 2)
 
   if floor_id == Blocks.AIR then
-    place_block(self, x, y, z - 2)
-    return
+    return place_block(self, x, y, z - 2)
   end
 
   -- place a block at feet
   local feet_id = world:get_block(x, y, z)
 
   if feet_id == Blocks.AIR then
-    place_block(self, x, y, z)
-    return
+    return place_block(self, x, y, z)
   end
 
-  -- try jumping
+  -- place a block at head
   local head_id = world:get_block(x, y, z + 2)
-  local ceiling_id = world:get_block(x, y, z + 4)
 
-  if head_id == Blocks.AIR and ceiling_id == Blocks.AIR then
-    self:jump_up(self.id, float_x, float_y, z + 2)
-    return
+  if head_id == Blocks.AIR then
+    return place_block(self, x, y, z + 2)
   end
+
+  return false
 end
 
 local function break_block(player, x, y, z)
   local block_id = player.instance.world:get_block(x, y, z)
 
   if block_id == Blocks.BEDROCK or block_id == Blocks.AIR then
-    return
+    return false
   end
 
   if player.instance.world:set_block(x, y, z, Blocks.AIR) then
     local loot = Blocks.Drops[block_id]
     player:add_item(loot[math.random(#loot)])
+    player:lockout()
+    return true
   end
 
-  player:lockout()
+  return false
 end
 
-function Player:break_block(x, y, z)
+function Player:try_break_block(x, y, z)
   local float_x = x
   local float_y = y
 
@@ -179,32 +195,46 @@ function Player:break_block(x, y, z)
   local head_id = world:get_block(x, y, z + 2)
 
   if head_id ~= Blocks.AIR then
-    break_block(self, x, y, z + 2)
-    return
+    return break_block(self, x, y, z + 2)
   end
 
   -- break the block at feet
   local feet_id = world:get_block(x, y, z)
 
   if feet_id ~= Blocks.AIR then
-    break_block(self, x, y, z)
-    return
+    return break_block(self, x, y, z)
   end
 
   -- break the block below
   local floor_id = world:get_block(x, y, z - 2)
 
   if floor_id ~= Blocks.AIR then
-    break_block(self, x, y, z - 2)
-    return
+    return break_block(self, x, y, z - 2)
   end
 
   -- try jumping down
   local next_floor_id = world:get_block(x, y, z - 4)
 
   if head_id == Blocks.AIR and feet_id == Blocks.AIR and floor_id == Blocks.AIR and next_floor_id ~= Blocks.AIR then
-    self:jump_down(self.id, float_x, float_y, z - 2)
+    self:animate_jump_down(self.id, float_x, float_y, z - 2)
     return
+  end
+end
+
+function Player:try_jump_up(x, y, z)
+  local int_x = math.floor(x)
+  local int_y = math.floor(y)
+  local int_z = math.floor(z)
+
+  local world = self.instance.world
+
+  -- try jumping
+  local feet_id = world:get_block(int_x, int_y, int_z)
+  local head_id = world:get_block(int_x, int_y, int_z + 2)
+  local ceiling_id = world:get_block(int_x, int_y, int_z + 4)
+
+  if feet_id ~= Blocks.AIR and head_id == Blocks.AIR and ceiling_id == Blocks.AIR then
+    self:animate_jump_up(self.id, x, y, int_z + 2)
   end
 end
 
@@ -219,7 +249,7 @@ function Player:lockout(time)
   end)
 end
 
-function Player:jump_up(player_id, x, y, z)
+function Player:animate_jump_up(player_id, x, y, z)
   local total_time = .25
   Net.animate_player_properties(player_id, {
     {
@@ -239,7 +269,7 @@ function Player:jump_up(player_id, x, y, z)
   })
 end
 
-function Player:jump_down(player_id, x, y, z)
+function Player:animate_jump_down(player_id, x, y, z)
   local total_time = .2
   Net.animate_player_properties(player_id, {
     {
@@ -271,10 +301,28 @@ function Player:add_item(item_id)
   }
 end
 
+function Player:open_menu()
+  if #self.menus > 0 then
+    return
+  end
+
+  self.menus[#self.menus+1] = Menu.ACTIONS
+
+  local posts = {
+    { id = "INVENTORY", read = true, title = "INVENTORY", author = "" },
+    { id = "PUNCH", read = true, title = "PUNCH/FALL", author = "" },
+    { id = "JUMP", read = true, title = "JUMP", author = "" }
+  }
+
+  Net.open_board(self.id, "Actions", Menu.COLOR, posts)
+end
+
 function Player:open_inventory()
   self.menus[#self.menus+1] = Menu.INVENTORY
 
-  local posts = {}
+  local posts = {
+    { id = "CRAFT", read = true, title = "CRAFT", author = "" }
+  }
 
   for _, item in ipairs(self.items) do
     posts[#posts+1] = { id = item.id, read = true, title = item.id, author = item.count }
@@ -286,19 +334,35 @@ end
 function Player:handle_post_selection(post_id)
   local current_menu = self.menus[#self.menus]
 
-  if current_menu == Menu.INVENTORY then
-    for i, item in ipairs(self.items) do
-      if item.id == post_id then
-        self.selected_item = item
-
-        -- move to top
-        table.remove(self.items, i)
-        table.insert(self.items, 1, item)
-        break
-      end
+  if current_menu == Menu.ACTIONS then
+    if post_id == "PUNCH" then
+      self.action = Action.PUNCH
+      self:close_menu()
+    elseif post_id == "JUMP" then
+      self.action = Action.JUMP
+      self:close_menu()
+    elseif post_id == "INVENTORY" then
+      self:open_inventory()
     end
+  elseif current_menu == Menu.INVENTORY then
+    if post_id == "CRAFT" then
+      Net.message_player(self.id, "Not yet available")
+    else
+      -- selecting an item
+      for i, item in ipairs(self.items) do
+        if item.id == post_id then
+          self.selected_item = item
+          self.action = Action.ITEM
 
-    self:close_menu()
+          -- move to top
+          table.remove(self.items, i)
+          table.insert(self.items, 1, item)
+          break
+        end
+      end
+
+      self:close_menu()
+    end
   end
 end
 
