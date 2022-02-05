@@ -145,13 +145,35 @@ function World:set_block(x, y, z, block_id)
   if layer == nil then return false end
   local row = layer[y + 1]
   if row == nil then return false end
-  if row[x + 1] == nil then return false end
+  local original_block_id = row[x + 1]
+  if original_block_id == nil then return false end
 
   for _, player in pairs(self.players) do
     if player.int_x == x and player.int_y == y and (player.int_z == z or player.int_z - World.layer_diff == z) then
       -- player standing where we want to place the block
       return false
     end
+  end
+
+  if includes(Blocks.TileEntities, original_block_id) then
+    local tile_entity
+    local index
+
+    for i, e in ipairs(self.tile_entities) do
+      if e.x == x and e.y == y and e.z == z then
+        tile_entity = e
+        index = i
+        break
+      end
+    end
+
+    if tile_entity.data.items and #tile_entity.data.items > 0 then
+      -- don't allow this to break unless all of the items are taken out
+      return false
+    end
+
+    tile_entity.deleted = true
+    table.remove(self.tile_entities, index)
   end
 
   row[x + 1] = block_id
@@ -161,13 +183,6 @@ function World:set_block(x, y, z, block_id)
   update_tile(self, x, y, z + World.player_layer_offset * World.layer_diff)
 
   if block_id == Blocks.AIR and not includes(Blocks.TileEntities, block_id) then
-    for i, e in ipairs(self.tile_entities) do
-      if e.x == x and e.y == y and e.z == z then
-        e.deleted = true
-        table.remove(self.tile_entities, i)
-        break
-      end
-    end
   end
 
   if self.spawn_x == x and self.spawn_y == y then
