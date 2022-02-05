@@ -152,16 +152,17 @@ function World:set_block(x, y, z, block_id)
     end
   end
 
-  if self.spawn_x == x and self.spawn_y == y then
-    -- recalculate spawn z
-    self:set_spawn_position(x, y)
-  end
-
   row[x + 1] = block_id
 
   update_tile(self, x, y, z - World.player_layer_offset * World.layer_diff)
   update_tile(self, x, y, z)
   update_tile(self, x, y, z + World.player_layer_offset * World.layer_diff)
+
+
+  if self.spawn_x == x and self.spawn_y == y then
+    -- recalculate spawn z
+    self:set_spawn_position(x, y)
+  end
 
   return true
 end
