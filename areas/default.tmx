@@ -1156,7 +1156,7 @@
 </data>
  </layer>
  <objectgroup id="65" name="Object Layer 31" offsetx="0" offsety="-210"/>
- <layer id="66" name="Tile Layer 32" width="32" height="32">
+ <layer id="66" name="Tile Layer 32" width="32" height="32" offsetx="0" offsety="-217">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1192,8 +1192,8 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="67" name="Object Layer 32"/>
- <layer id="68" name="Tile Layer 33" width="32" height="32">
+ <objectgroup id="67" name="Object Layer 32" offsetx="0" offsety="-217"/>
+ <layer id="68" name="Tile Layer 33" width="32" height="32" offsetx="0" offsety="-224">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1229,8 +1229,8 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="69" name="Object Layer 33"/>
- <layer id="70" name="Tile Layer 34" width="32" height="32">
+ <objectgroup id="69" name="Object Layer 33" offsetx="0" offsety="-224"/>
+ <layer id="70" name="Tile Layer 34" width="32" height="32" offsetx="0" offsety="-231">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1266,8 +1266,8 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="71" name="Object Layer 34"/>
- <layer id="72" name="Tile Layer 35" width="32" height="32">
+ <objectgroup id="71" name="Object Layer 34" offsetx="0" offsety="-231"/>
+ <layer id="72" name="Tile Layer 35" width="32" height="32" offsetx="0" offsety="-238">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1303,5 +1303,5 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="73" name="Object Layer 35"/>
+ <objectgroup id="73" name="Object Layer 35" offsetx="0" offsety="-238"/>
 </map>
