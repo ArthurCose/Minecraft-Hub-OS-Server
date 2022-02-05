@@ -167,13 +167,15 @@ function World:set_block(x, y, z, block_id)
       end
     end
 
-    if tile_entity.data.items and #tile_entity.data.items > 0 then
-      -- don't allow this to break unless all of the items are taken out
-      return false
-    end
+    if tile_entity then
+      if tile_entity.data.items and #tile_entity.data.items > 0 then
+        -- don't allow this to break unless all of the items are taken out
+        return false
+      end
 
-    tile_entity.deleted = true
-    table.remove(self.tile_entities, index)
+      tile_entity.deleted = true
+      table.remove(self.tile_entities, index)
+    end
   end
 
   row[x + 1] = block_id
