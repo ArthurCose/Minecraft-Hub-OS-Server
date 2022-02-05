@@ -1,5 +1,6 @@
 local Blocks = require("scripts/minecraft/blocks")
 local SyncedWorldInstance = require("scripts/minecraft/synced_world_instance")
+local includes = require("scripts/lib/includes")
 
 local World = {
   player_layer_offset = 1,
@@ -17,7 +18,8 @@ function World:new(area_id)
     width = 0,
     height = 0,
     layers = 0,
-    data = {},
+    blocks = {}, -- int[][][]
+    tile_entities = {}, -- { x, y, z, data, deleted? }[]
     players = {},
   }
 
@@ -92,10 +94,10 @@ function World:use_area(area_id)
   self.height = Net.get_height(area_id)
   self.layers = math.ceil(Net.get_layer_count(area_id) / World.layer_diff) - 1 - World.player_layer_offset
 
-  -- load map into self.data
+  -- load map into self.blocks
   for z = 0, self.layers - 1 do
     local layer = {}
-    self.data[z + 1] = layer
+    self.blocks[z + 1] = layer
 
     for y = 0, self.height - 1 do
       local row = {}
@@ -130,7 +132,7 @@ end
 
 function World:get_block(x, y, z)
   z = math.floor(z / World.layer_diff) - World.player_layer_offset
-  local layer = self.data[z + 1]
+  local layer = self.blocks[z + 1]
   if layer == nil then return Blocks.AIR end
   local row = layer[y + 1]
   if row == nil then return Blocks.AIR end
@@ -139,7 +141,7 @@ end
 
 function World:set_block(x, y, z, block_id)
   local layerIndex = math.floor(z / World.layer_diff) + 1 - World.player_layer_offset
-  local layer = self.data[layerIndex]
+  local layer = self.blocks[layerIndex]
   if layer == nil then return false end
   local row = layer[y + 1]
   if row == nil then return false end
@@ -158,6 +160,15 @@ function World:set_block(x, y, z, block_id)
   update_tile(self, x, y, z)
   update_tile(self, x, y, z + World.player_layer_offset * World.layer_diff)
 
+  if block_id == Blocks.AIR and not includes(Blocks.TileEntities, block_id) then
+    for i, e in ipairs(self.tile_entities) do
+      if e.x == x and e.y == y and e.z == z then
+        e.deleted = true
+        table.remove(self.tile_entities, i)
+        break
+      end
+    end
+  end
 
   if self.spawn_x == x and self.spawn_y == y then
     -- recalculate spawn z
@@ -181,6 +192,33 @@ function World:set_spawn_position(x, y)
   end
 
   Net.set_spawn_position(self.area_id, x + .5, y + .5, self.spawn_z)
+end
+
+-- finds the tile entity or makes a new one
+function World:request_tile_entity(x, y, z)
+  local block_id = self:get_block(x, y, z)
+
+  if not includes(Blocks.TileEntities, block_id) then
+    return
+  end
+
+  -- search for the tile entity
+  for _, e in ipairs(self.tile_entities) do
+    if e.x == x and e.y == y and e.z == z then
+      return e
+    end
+  end
+
+  -- none found, make a new one
+  local tile_entity = {
+    x = x,
+    y = y,
+    z = z,
+    data = {}
+  }
+
+  self.tile_entities[#self.tile_entities+1] = tile_entity
+  return tile_entity
 end
 
 function World:connect_player(player)

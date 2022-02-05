@@ -6,6 +6,10 @@ local players = {}
 
 function tick()
   world:tick()
+
+  for _, player in pairs(players) do
+    player:tick()
+  end
 end
 
 function handle_player_request(player_id)

@@ -1,10 +1,13 @@
 local Blocks = require("scripts/minecraft/blocks")
+local InventoryUtil = require("scripts/minecraft/inventory_util")
 
 local Player = {}
 
 local Menu = {
   ACTIONS = 0,
   INVENTORY = 1,
+  CHEST = 2,
+  CHEST_INVENTORY_SUBMENU = 3,
   COLOR = { r = 139, g = 139, b = 139 }
 }
 
@@ -12,6 +15,7 @@ local Action = {
   PUNCH = 0,
   JUMP = 1,
   ITEM = 2,
+  INTERACT = 3,
 }
 
 function Player:new(player_id)
@@ -19,7 +23,7 @@ function Player:new(player_id)
     id = player_id,
     instance = nil,
     avatar = {},
-    menus = {},
+    menus = {}, -- { id, (menu specific) }
     items = { -- { id, count }[]
     -- starting items
       { id = "COBBLESTONE", count = 8 }
@@ -38,6 +42,10 @@ function Player:new(player_id)
   self.__index = self
 
   return player
+end
+
+function Player:tick()
+  self:update_menu()
 end
 
 function Player:handle_player_avatar_change(details)
@@ -90,6 +98,8 @@ function Player:handle_tile_interaction(x, y, z, button)
     self:try_break_block(x, y, z)
   elseif self.action == Action.ITEM then
     self:try_place_block(x, y, z)
+  elseif self.action == Action.INTERACT then
+    self:try_interact(x, y, z)
   end
 end
 
@@ -173,7 +183,7 @@ local function break_block(player, x, y, z)
 
   if player.instance.world:set_block(x, y, z, Blocks.AIR) then
     local loot = Blocks.Drops[block_id]
-    player:add_item(loot[math.random(#loot)])
+    InventoryUtil.add_item(player.items, loot[math.random(#loot)])
     player:lockout()
     return true
   end
@@ -283,22 +293,17 @@ function Player:animate_jump_down(player_id, x, y, z)
   })
 end
 
-function Player:add_item(item_id)
-  if item_id == nil then
-    return
-  end
+function Player:try_interact(x, y, z)
+  x = math.floor(x)
+  y = math.floor(y)
 
-  for _, item in ipairs(self.items) do
-    if item.id == item_id then
-      item.count = item.count + 1
-      return
-    end
-  end
+  local world = self.instance.world
+  local block_id = world:get_block(x, y, z)
 
-  self.items[#self.items+1] = {
-    id = item_id,
-    count = 1
-  }
+  if block_id == Blocks.CHEST then
+    local tile_entity = world:request_tile_entity(x, y, z)
+    self:open_chest(tile_entity)
+  end
 end
 
 function Player:open_menu()
@@ -306,35 +311,80 @@ function Player:open_menu()
     return
   end
 
-  self.menus[#self.menus+1] = Menu.ACTIONS
-
   local posts = {
     { id = "INVENTORY", read = true, title = "INVENTORY", author = "" },
     { id = "PUNCH", read = true, title = "PUNCH/FALL", author = "" },
-    { id = "JUMP", read = true, title = "JUMP", author = "" }
+    { id = "JUMP", read = true, title = "JUMP", author = "" },
+    { id = "INTERACT", read = true, title = "INTERACT", author = "" },
   }
 
   Net.open_board(self.id, "Actions", Menu.COLOR, posts)
+  self.menus[#self.menus+1] = { id = Menu.ACTIONS }
 end
 
 function Player:open_inventory()
-  self.menus[#self.menus+1] = Menu.INVENTORY
-
   local posts = {
     { id = "CRAFT", read = true, title = "CRAFT", author = "" }
   }
 
-  for _, item in ipairs(self.items) do
-    posts[#posts+1] = { id = item.id, read = true, title = item.id, author = item.count }
-  end
+  InventoryUtil.generate_item_posts(self.items, posts)
 
   Net.open_board(self.id, "Inventory", Menu.COLOR, posts)
+  self.menus[#self.menus+1] = { id = Menu.INVENTORY }
+end
+
+function Player:open_chest(tile_entity)
+  local posts = {
+    { id = "INVENTORY", read = true, title = "INVENTORY", author = "" }
+  }
+
+  if not tile_entity.data.items then
+    tile_entity.data.items = {}
+  end
+
+  InventoryUtil.generate_item_posts(tile_entity.data.items, posts)
+
+  Net.open_board(self.id, "Chest", Menu.COLOR, posts)
+  self.menus[#self.menus+1] = { id = Menu.CHEST, posts = posts, tile_entity = tile_entity }
+end
+
+function Player:open_chest_inventory_submenu(tile_entity)
+  local posts = {}
+
+  InventoryUtil.generate_item_posts(self.items, posts)
+
+  Net.open_board(self.id, "Inventory", Menu.COLOR, posts)
+  self.menus[#self.menus+1] = { id = Menu.CHEST_INVENTORY_SUBMENU, tile_entity = tile_entity, posts = posts }
+end
+
+function Player:update_menu()
+  local current_menu = self.menus[#self.menus]
+
+  if not current_menu then
+    return
+  end
+
+  if current_menu.tile_entity and current_menu.tile_entity.deleted then
+    -- block we're looking at was deleted
+    self:close_menu()
+    return
+  end
+
+  if current_menu.id == Menu.CHEST then
+    InventoryUtil.sync_inventory_menu(self, current_menu.tile_entity.data.items, current_menu.posts, 1)
+  elseif current_menu.id == Menu.CHEST_INVENTORY_SUBMENU then
+    InventoryUtil.sync_inventory_menu(self, self.items, current_menu.posts, 0)
+  end
 end
 
 function Player:handle_post_selection(post_id)
   local current_menu = self.menus[#self.menus]
 
-  if current_menu == Menu.ACTIONS then
+  if not current_menu then
+    return
+  end
+
+  if current_menu.id == Menu.ACTIONS then
     if post_id == "PUNCH" then
       self.action = Action.PUNCH
       self:close_menu()
@@ -343,8 +393,11 @@ function Player:handle_post_selection(post_id)
       self:close_menu()
     elseif post_id == "INVENTORY" then
       self:open_inventory()
+    elseif post_id == "INTERACT" then
+      self.action = Action.INTERACT
+      self:close_menu()
     end
-  elseif current_menu == Menu.INVENTORY then
+  elseif current_menu.id == Menu.INVENTORY then
     if post_id == "CRAFT" then
       Net.message_player(self.id, "Not yet available")
     else
@@ -363,21 +416,43 @@ function Player:handle_post_selection(post_id)
 
       self:close_menu()
     end
+  elseif current_menu.id == Menu.CHEST then
+    if current_menu.tile_entity.deleted then
+      -- just exit the menu if the chest is gone
+      self:close_menu()
+    elseif post_id == "INVENTORY" then
+      self:open_chest_inventory_submenu(current_menu.tile_entity)
+    else
+      -- take one item out of the chest
+      local items = current_menu.tile_entity.data.items
+
+      if InventoryUtil.remove_item(items, post_id) then
+        InventoryUtil.add_item(self.items, post_id)
+        self:update_menu()
+      end
+    end
+  elseif current_menu.id == Menu.CHEST_INVENTORY_SUBMENU then
+    if current_menu.tile_entity.deleted then
+      -- just exit the menu if the chest is gone
+      self:close_menu()
+    else
+      -- move one item into the chest
+      local items = current_menu.tile_entity.data.items
+
+      if InventoryUtil.remove_item(self.items, post_id) then
+        InventoryUtil.add_item(items, post_id)
+        self:update_menu()
+      end
+    end
   end
 end
 
 function Player:close_menu()
   Net.close_bbs(self.id)
-  self.menus[#self.menus] = nil
+  self.menus = {}
 end
 
 function Player:handle_board_close()
-  local current_menu = self.menus[#self.menus]
-
-  if current_menu == Menu.INVENTORY then
-    self.selected_item = nil
-  end
-
   self.menus[#self.menus] = nil
 end
 

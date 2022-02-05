@@ -92,4 +92,9 @@ Blocks.Drops = {
   [Blocks.CHEST] = { "CHEST" },
 }
 
+Blocks.TileEntities = {
+  Blocks.FURNACE,
+  Blocks.CHEST
+}
+
 return Blocks
