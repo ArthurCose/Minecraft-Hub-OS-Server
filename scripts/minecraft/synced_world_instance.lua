@@ -45,6 +45,14 @@ function SyncedWorldInstance:handle_player_move(player)
   self.occlusion:handle_player_move(player)
 end
 
+function SyncedWorldInstance:handle_player_emote(player, emote)
+  for _, mirror in ipairs(self.player_mirrors) do
+    if mirror.player == player then
+      Net.set_bot_emote(mirror.bot_id, emote)
+    end
+  end
+end
+
 function SyncedWorldInstance:add_player_mirror(player, warp_in)
   local bot_id = Net.create_bot({
     name = Net.get_player_name(player.id),

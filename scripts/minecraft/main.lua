@@ -61,3 +61,15 @@ function handle_player_avatar_change(player_id, details)
   local player = players[player_id]
   player:handle_player_avatar_change(details)
 end
+
+function handle_player_emote(player_id, emote)
+  local player = players[player_id]
+
+  if not player.instance then
+    return
+  end
+
+  for _, p in pairs(player.instance.world.players) do
+    p.instance:handle_player_emote(player, emote)
+  end
+end
