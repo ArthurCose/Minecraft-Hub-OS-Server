@@ -1,4 +1,5 @@
-local Blocks = require("scripts/minecraft/blocks")
+local Blocks = require("scripts/minecraft/data/blocks")
+local BlockLoot = require("scripts/minecraft/data/block_loot")
 local InventoryUtil = require("scripts/minecraft/inventory_util")
 
 local Player = {}
@@ -182,7 +183,7 @@ local function break_block(player, x, y, z)
   end
 
   if player.instance.world:set_block(x, y, z, Blocks.AIR) then
-    local loot = Blocks.Drops[block_id]
+    local loot = BlockLoot[block_id]
     InventoryUtil.add_item(player.items, loot[math.random(#loot)])
     player:lockout()
     return true

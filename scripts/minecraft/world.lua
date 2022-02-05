@@ -1,4 +1,5 @@
-local Blocks = require("scripts/minecraft/blocks")
+local Blocks = require("scripts/minecraft/data/blocks")
+local TileEntities = require("scripts/minecraft/data/tile_entities")
 local SyncedWorldInstance = require("scripts/minecraft/synced_world_instance")
 local includes = require("scripts/lib/includes")
 
@@ -155,7 +156,7 @@ function World:set_block(x, y, z, block_id)
     end
   end
 
-  if includes(Blocks.TileEntities, original_block_id) then
+  if includes(TileEntities, original_block_id) then
     local tile_entity
     local index
 
@@ -183,9 +184,6 @@ function World:set_block(x, y, z, block_id)
   update_tile(self, x, y, z - World.player_layer_offset * World.layer_diff)
   update_tile(self, x, y, z)
   update_tile(self, x, y, z + World.player_layer_offset * World.layer_diff)
-
-  if block_id == Blocks.AIR and not includes(Blocks.TileEntities, block_id) then
-  end
 
   if self.spawn_x == x and self.spawn_y == y then
     -- recalculate spawn z
@@ -215,7 +213,7 @@ end
 function World:request_tile_entity(x, y, z)
   local block_id = self:get_block(x, y, z)
 
-  if not includes(Blocks.TileEntities, block_id) then
+  if not includes(TileEntities, block_id) then
     return
   end
 

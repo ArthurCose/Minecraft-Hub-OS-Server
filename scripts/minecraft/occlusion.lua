@@ -1,6 +1,6 @@
 local texture_path = "/server/assets/tiles/blocks.png"
 local BotAnimation = require("scripts/minecraft/occlusion_bot_animation")
-local Blocks = require("scripts/minecraft/blocks")
+local Blocks = require("scripts/minecraft/data/blocks")
 
 local Occlusion = {}
 
