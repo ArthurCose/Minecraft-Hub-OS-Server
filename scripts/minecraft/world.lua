@@ -149,7 +149,7 @@ function World:set_block(x, y, z, block_id)
   if original_block_id == nil then return false end
 
   for _, player in pairs(self.players) do
-    if player.int_x == x and player.int_y == y and (player.int_z == z or player.int_z - World.layer_diff == z) then
+    if player.int_x == x and player.int_y == y and (player.int_z == z or player.int_z + World.layer_diff == z) then
       -- player standing where we want to place the block
       return false
     end
