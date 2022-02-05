@@ -209,7 +209,7 @@ function World:disconnect_player(player)
   player.instance = nil
   self.players[player.id] = nil
 
-  -- add the player to other instances
+  -- remove the player from other instances
   for _, other_player in pairs(self.players) do
     other_player.instance:remove_player_mirror(player)
   end

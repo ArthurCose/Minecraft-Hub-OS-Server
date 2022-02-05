@@ -68,7 +68,10 @@ function SyncedWorldInstance:add_player_mirror(player, warp_in)
 
   self.player_mirrors[#self.player_mirrors+1] = {
     bot_id = bot_id,
-    player = player
+    player = player,
+    x = player.x,
+    y = player.y,
+    z = player.z,
   }
 end
 
