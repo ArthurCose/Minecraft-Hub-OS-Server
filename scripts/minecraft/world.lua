@@ -16,14 +16,16 @@ function World:new(area_id)
     area_id = "default",
     first_walkable_gid = 0,
     first_collidable_gid = 0,
-    spawn_x = 0,
-    spawn_y = 0,
-    spawn_z = 0,
     width = 0,
     height = 0,
     layers = 0,
-    blocks = {}, -- int[][][]
-    tile_entities = {}, -- { x, y, z, data, deleted? }[]
+    data = {
+      spawn_x = 0,
+      spawn_y = 0,
+      spawn_z = 0,
+      blocks = {}, -- int[][][]
+      tile_entities = {}, -- { x, y, z, data, deleted? }[]
+    },
     players = {},
   }
 
@@ -100,10 +102,10 @@ function World:use_area(area_id)
   self.height = Net.get_height(area_id)
   self.layers = math.ceil(Net.get_layer_count(area_id) / World.layer_diff) - 1 - World.player_layer_offset
 
-  -- load map into self.blocks
+  -- load map into self.data.blocks
   for z = 0, self.layers - 1 do
     local layer = {}
-    self.blocks[z + 1] = layer
+    self.data.blocks[z + 1] = layer
 
     for y = 0, self.height - 1 do
       local row = {}
@@ -115,13 +117,17 @@ function World:use_area(area_id)
 
         if block_id == Blocks.BEDROCK then
           -- resolve spawn_z through set_spawn_position later
-          self.spawn_x = x
-          self.spawn_y = y
+          self.data.spawn_x = x
+          self.data.spawn_y = y
         end
       end
     end
   end
 
+  self:refresh()
+end
+
+function World:refresh()
   -- adjust collisions
   for z = 0, self.layers + 1 do -- intentional +1, will update collisions for the top most layer
     for y = 0, self.height - 1 do
@@ -133,12 +139,12 @@ function World:use_area(area_id)
   end
 
   -- resolve spawn_z
-  self:set_spawn_position(self.spawn_x, self.spawn_y)
+  self:set_spawn_position(self.data.spawn_x, self.data.spawn_y)
 end
 
 function World:get_block(x, y, z)
   z = math.floor(z / World.layer_diff) - World.player_layer_offset
-  local layer = self.blocks[z + 1]
+  local layer = self.data.blocks[z + 1]
   if layer == nil then return Blocks.AIR end
   local row = layer[y + 1]
   if row == nil then return Blocks.AIR end
@@ -147,7 +153,7 @@ end
 
 function World:set_block(x, y, z, block_id)
   local layerIndex = math.floor(z / World.layer_diff) + 1 - World.player_layer_offset
-  local layer = self.blocks[layerIndex]
+  local layer = self.data.blocks[layerIndex]
   if layer == nil then return false end
   local row = layer[y + 1]
   if row == nil then return false end
@@ -158,7 +164,7 @@ function World:set_block(x, y, z, block_id)
     local tile_entity
     local index
 
-    for i, e in ipairs(self.tile_entities) do
+    for i, e in ipairs(self.data.tile_entities) do
       if e.x == x and e.y == y and e.z == z then
         tile_entity = e
         index = i
@@ -173,7 +179,7 @@ function World:set_block(x, y, z, block_id)
       end
 
       tile_entity.deleted = true
-      table.remove(self.tile_entities, index)
+      table.remove(self.data.tile_entities, index)
     end
   end
 
@@ -183,7 +189,7 @@ function World:set_block(x, y, z, block_id)
   update_tile(self, x, y, z)
   update_tile(self, x, y, z + World.player_layer_offset * World.layer_diff)
 
-  if self.spawn_x == x and self.spawn_y == y then
+  if self.data.spawn_x == x and self.data.spawn_y == y then
     -- recalculate spawn z
     self:set_spawn_position(x, y)
   end
@@ -203,22 +209,22 @@ function World:has_player_at(int_x, int_y, int_z)
 end
 
 function World:set_spawn_position(x, y)
-  self.spawn_x = x
-  self.spawn_y = y
+  self.data.spawn_x = x
+  self.data.spawn_y = y
 
   for z = World.player_layer_offset * World.layer_diff, self.layers - 1, World.layer_diff do
     local id = self:get_block(x, y, z)
 
     if id == Blocks.AIR then
-      self.spawn_z = z
+      self.data.spawn_z = z
       break
     end
   end
 
-  Net.set_spawn_position(self.area_id, x + .5, y + .5, self.spawn_z)
+  Net.set_spawn_position(self.area_id, x + .5, y + .5, self.data.spawn_z)
 
   for _, player in ipairs(self.players) do
-    Net.set_spawn_position(player.instance.id, x + .5, y + .5, self.spawn_z)
+    Net.set_spawn_position(player.instance.id, x + .5, y + .5, self.data.spawn_z)
   end
 end
 
@@ -231,7 +237,7 @@ function World:request_tile_entity(x, y, z)
   end
 
   -- search for the tile entity
-  for _, e in ipairs(self.tile_entities) do
+  for _, e in ipairs(self.data.tile_entities) do
     if e.x == x and e.y == y and e.z == z then
       return e
     end
@@ -245,7 +251,7 @@ function World:request_tile_entity(x, y, z)
     data = {}
   }
 
-  self.tile_entities[#self.tile_entities+1] = tile_entity
+  self.data.tile_entities[#self.data.tile_entities+1] = tile_entity
   return tile_entity
 end
 
@@ -287,8 +293,8 @@ function World:tick()
   end
 
   for _ = 1, self.width * self.height * self.layers / 64 do
-    local layerIndex = math.random(#self.blocks)
-    local layer = self.blocks[layerIndex]
+    local layerIndex = math.random(#self.data.blocks)
+    local layer = self.data.blocks[layerIndex]
     local y = math.random(#layer)
     local row = layer[y]
     local x = math.random(#row)

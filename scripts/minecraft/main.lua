@@ -1,8 +1,13 @@
 local World = require("scripts/minecraft/world")
 local Player = require("scripts/minecraft/player")
+local Saves = require("scripts/minecraft/saves")
 
 local world = World:new("default")
 local players = {}
+
+-- ten minutes
+Saves.save_every(world, 60 * 10, "world.json")
+Saves.load(world, "world.json")
 
 function tick()
   world:tick()
