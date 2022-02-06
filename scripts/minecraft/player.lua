@@ -2,6 +2,7 @@ local Blocks = require("scripts/minecraft/data/blocks")
 local BlockLoot = require("scripts/minecraft/data/block_loot")
 local Liquids = require("scripts/minecraft/data/liquids")
 local Tags = require("scripts/minecraft/data/tags")
+local NoCollision = require("scripts/minecraft/data/no_collision")
 local MenuColors = require("scripts/minecraft/menu/menu_colors")
 local PrimaryMenu = require("scripts/minecraft/menu/primary_menu")
 local CraftingMenu = require("scripts/minecraft/menu/crafting_menu")
@@ -163,7 +164,7 @@ local function place_block(player, x, y, z)
 
   local world = player.instance.world
 
-  if not world:has_player_at(x, y, z) and world:set_block(x, y, z, block_id) then
+  if (includes(NoCollision, block_id) or not world:has_player_at(x, y, z)) and world:set_block(x, y, z, block_id) then
     if includes(Tags["#signs"], player.selected_item.id) then
       local tile_entity = world:request_tile_entity(x, y, z)
       player:prompt(17 * 3).and_then(function(response)
