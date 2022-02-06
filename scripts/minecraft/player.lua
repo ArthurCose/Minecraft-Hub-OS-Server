@@ -390,18 +390,26 @@ function Player:try_interact(x, y, z)
   y = math.floor(y)
 
   local world = self.instance.world
-  local block_id = world:get_block(x, y, z)
 
-  if block_id == Blocks.CRAFTING_TABLE then
-    self:open_menu(CraftingMenu:new(self, "Crafting Table", MenuColors.CRAFTING_TABLE_COLOR, CraftingRecipes.CraftingTable))
-  elseif block_id == Blocks.FURNACE or block_id == Blocks.FURNACE_E or block_id == Blocks.FURNACE_N then
-    self:open_menu(CraftingMenu:new(self, "Furnace", MenuColors.FURNACE_COLOR, CraftingRecipes.Furnace))
-  elseif block_id == Blocks.CHEST or block_id == Blocks.CHEST_E or block_id == Blocks.CHEST_N then
-    local tile_entity = world:request_tile_entity(x, y, z)
-    self:open_menu(ChestMenu:new(self, tile_entity))
-  elseif block_id == Blocks.OAK_SIGN_N or block_id == Blocks.OAK_SIGN_S or block_id == Blocks.OAK_SIGN_E or block_id == Blocks.OAK_SIGN_W then
-    local tile_entity = world:request_tile_entity(x, y, z)
-    self:message(tile_entity.data.text)
+  for i = 0, 1 do
+    local test_z = z + i * world.layer_diff
+    local block_id = world:get_block(x, y, test_z)
+
+    if block_id == Blocks.CRAFTING_TABLE then
+      self:open_menu(CraftingMenu:new(self, "Crafting Table", MenuColors.CRAFTING_TABLE_COLOR, CraftingRecipes.CraftingTable))
+      break
+    elseif block_id == Blocks.FURNACE or block_id == Blocks.FURNACE_E or block_id == Blocks.FURNACE_N then
+      self:open_menu(CraftingMenu:new(self, "Furnace", MenuColors.FURNACE_COLOR, CraftingRecipes.Furnace))
+      break
+    elseif block_id == Blocks.CHEST or block_id == Blocks.CHEST_E or block_id == Blocks.CHEST_N then
+      local tile_entity = world:request_tile_entity(x, y, test_z)
+      self:open_menu(ChestMenu:new(self, tile_entity))
+      break
+    elseif block_id == Blocks.OAK_SIGN_N or block_id == Blocks.OAK_SIGN_S or block_id == Blocks.OAK_SIGN_E or block_id == Blocks.OAK_SIGN_W then
+      local tile_entity = world:request_tile_entity(x, y, test_z)
+      self:message(tile_entity.data.text)
+      break
+    end
   end
 end
 
