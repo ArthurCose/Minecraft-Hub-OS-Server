@@ -153,6 +153,10 @@ function World:get_block(x, y, z)
 end
 
 function World:set_block(x, y, z, block_id)
+  if type(block_id) ~= "number" then
+    error("attempted to set block at (" .. x .. ", " .. y .. ", " .. z.. ") with invalid type \"" .. type(block_id) .. "\"")
+  end
+
   local layerIndex = math.floor(z / World.layer_diff) + 1 - World.player_layer_offset
   local layer = self.data.blocks[layerIndex]
   if layer == nil then return false end
