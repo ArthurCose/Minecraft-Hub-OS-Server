@@ -1,31 +1,16 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local BlockLoot = require("scripts/minecraft/data/block_loot")
 local Tags = require("scripts/minecraft/data/tags")
+local MenuColors = require("scripts/minecraft/menu/menu_colors")
+local PrimaryMenu = require("scripts/minecraft/menu/primary_menu")
+local CraftingMenu = require("scripts/minecraft/menu/crafting_menu")
 local CraftingRecipes = require("scripts/minecraft/data/crafting_recipes")
-local CraftingUtil = require("scripts/minecraft/crafting_util")
+local ChestMenu = require("scripts/minecraft/menu/chest_menu")
 local InventoryUtil = require("scripts/minecraft/inventory_util")
+local PlayerActions = require("scripts/minecraft/player_actions")
 local includes = require("scripts/lib/includes")
 
 local Player = {}
-
-local Menu = {
-  ACTIONS = 0,
-  INVENTORY = 1,
-  CRAFT = 2,
-  CHEST = 3,
-  CHEST_INVENTORY_SUBMENU = 4,
-  DEFAULT_COLOR = { r = 150, g = 150, b = 150 },
-  CRAFTING_TABLE_COLOR = { r = 110, g = 55, b = 35 },
-  FURNACE_COLOR = { r = 100, g = 100, b = 100 },
-  CHEST_COLOR = { r = 130, g = 86, b = 28 }
-}
-
-local Action = {
-  PUNCH = 0,
-  JUMP = 1,
-  ITEM = 2,
-  INTERACT = 3,
-}
 
 function Player:new(player_id)
   local player = {
@@ -39,7 +24,7 @@ function Player:new(player_id)
       { id = "OAK_LOG", count = 8 },
       { id = "DIRT", count = 16 }
     },
-    action = Action.PUNCH,
+    action = PlayerActions.PUNCH,
     selected_item = nil,
     x = 0,
     y = 0,
@@ -113,17 +98,19 @@ function Player:handle_tile_interaction(x, y, z, button)
   y = math.floor(y) + .5
 
   if button == 1 then
-    self:open_menu()
+    if #self.menus == 0 then
+      self:open_menu(PrimaryMenu:new(self))
+    end
     return
   end
 
-  if self.action == Action.JUMP then
+  if self.action == PlayerActions.JUMP then
     self:try_jump_up(x, y, z)
-  elseif self.action == Action.PUNCH then
+  elseif self.action == PlayerActions.PUNCH then
     self:try_break_block(x, y, z)
-  elseif self.action == Action.ITEM then
+  elseif self.action == PlayerActions.ITEM then
     self:try_place_block(x, y, z)
-  elseif self.action == Action.INTERACT then
+  elseif self.action == PlayerActions.INTERACT then
     self:try_interact(x, y, z)
   end
 end
@@ -406,76 +393,21 @@ function Player:try_interact(x, y, z)
   local block_id = world:get_block(x, y, z)
 
   if block_id == Blocks.CRAFTING_TABLE then
-    self:open_crafting_menu("Crafting Table", CraftingRecipes.CraftingTable, Menu.CRAFTING_TABLE_COLOR)
+    self:open_menu(CraftingMenu:new(self, "Crafting Table", MenuColors.CRAFTING_TABLE_COLOR, CraftingRecipes.CraftingTable))
   elseif block_id == Blocks.FURNACE or block_id == Blocks.FURNACE_E or block_id == Blocks.FURNACE_N then
-    self:open_crafting_menu("Furnace", CraftingRecipes.Furnace, Menu.FURNACE_COLOR)
+    self:open_menu(CraftingMenu:new(self, "Furnace", MenuColors.FURNACE_COLOR, CraftingRecipes.Furnace))
   elseif block_id == Blocks.CHEST or block_id == Blocks.CHEST_E or block_id == Blocks.CHEST_N then
     local tile_entity = world:request_tile_entity(x, y, z)
-    self:open_chest(tile_entity)
+    self:open_menu(ChestMenu:new(self, tile_entity))
   elseif block_id == Blocks.OAK_SIGN_N or block_id == Blocks.OAK_SIGN_S or block_id == Blocks.OAK_SIGN_E or block_id == Blocks.OAK_SIGN_W then
     local tile_entity = world:request_tile_entity(x, y, z)
     self:message(tile_entity.data.text)
   end
 end
 
-function Player:open_menu()
-  if #self.menus > 0 then
-    return
-  end
-
-  local posts = {
-    { id = "INVENTORY", read = true, title = "INVENTORY", author = "" },
-    { id = "PUNCH", read = true, title = "PUNCH/FALL", author = "" },
-    { id = "JUMP", read = true, title = "JUMP", author = "" },
-    { id = "INTERACT", read = true, title = "INTERACT", author = "" },
-  }
-
-  Net.open_board(self.id, "Actions", Menu.DEFAULT_COLOR, posts)
-  self.menus[#self.menus+1] = { id = Menu.ACTIONS }
-end
-
-function Player:open_inventory()
-  local posts = {
-    { id = "CRAFT", read = true, title = "CRAFT", author = "" }
-  }
-
-  InventoryUtil.generate_item_posts(self.items, posts)
-
-  Net.open_board(self.id, "Inventory", Menu.DEFAULT_COLOR, posts)
-  self.menus[#self.menus+1] = { id = Menu.INVENTORY }
-end
-
-function Player:open_crafting_menu(name, recipes, color)
-  local posts = {}
-
-  CraftingUtil.generate_recipe_posts(recipes, self.items, posts)
-
-  Net.open_board(self.id, name, color, posts)
-  self.menus[#self.menus+1] = { id = Menu.CRAFT, recipes = recipes }
-end
-
-function Player:open_chest(tile_entity)
-  local posts = {
-    { id = "INVENTORY", read = true, title = "INVENTORY", author = "" }
-  }
-
-  if not tile_entity.data.items then
-    tile_entity.data.items = {}
-  end
-
-  InventoryUtil.generate_item_posts(tile_entity.data.items, posts)
-
-  Net.open_board(self.id, "Chest", Menu.CHEST_COLOR, posts)
-  self.menus[#self.menus+1] = { id = Menu.CHEST, posts = posts, tile_entity = tile_entity }
-end
-
-function Player:open_chest_inventory_submenu(tile_entity)
-  local posts = {}
-
-  InventoryUtil.generate_item_posts(self.items, posts)
-
-  Net.open_board(self.id, "Inventory", Menu.DEFAULT_COLOR, posts)
-  self.menus[#self.menus+1] = { id = Menu.CHEST_INVENTORY_SUBMENU, tile_entity = tile_entity, posts = posts }
+function Player:open_menu(menu)
+  self.menus[#self.menus+1] = menu
+  menu:open()
 end
 
 function Player:update_menu()
@@ -485,17 +417,7 @@ function Player:update_menu()
     return
   end
 
-  if current_menu.tile_entity and current_menu.tile_entity.deleted then
-    -- block we're looking at was deleted
-    self:close_menu()
-    return
-  end
-
-  if current_menu.id == Menu.CHEST then
-    InventoryUtil.sync_inventory_menu(self, current_menu.tile_entity.data.items, current_menu.posts, 1)
-  elseif current_menu.id == Menu.CHEST_INVENTORY_SUBMENU then
-    InventoryUtil.sync_inventory_menu(self, self.items, current_menu.posts, 0)
-  end
+  current_menu:update()
 end
 
 function Player:handle_post_selection(post_id)
@@ -505,73 +427,10 @@ function Player:handle_post_selection(post_id)
     return
   end
 
-  if current_menu.id == Menu.ACTIONS then
-    if post_id == "PUNCH" then
-      self.action = Action.PUNCH
-      self:close_menu()
-    elseif post_id == "JUMP" then
-      self.action = Action.JUMP
-      self:close_menu()
-    elseif post_id == "INVENTORY" then
-      self:open_inventory()
-    elseif post_id == "INTERACT" then
-      self.action = Action.INTERACT
-      self:close_menu()
-    end
-  elseif current_menu.id == Menu.INVENTORY then
-    if post_id == "CRAFT" then
-      self:open_crafting_menu("Craft", CraftingRecipes.Inventory, Menu.DEFAULT_COLOR)
-    else
-      -- selecting an item
-      for i, item in ipairs(self.items) do
-        if item.id == post_id then
-          self.selected_item = item
-          self.action = Action.ITEM
-
-          -- move to top
-          table.remove(self.items, i)
-          table.insert(self.items, 1, item)
-          break
-        end
-      end
-
-      self:close_menu()
-    end
-  elseif current_menu.id == Menu.CRAFT then
-    CraftingUtil.craft(current_menu.recipes, self.items, post_id)
-    self:close_menu()
-  elseif current_menu.id == Menu.CHEST then
-    if current_menu.tile_entity.deleted then
-      -- just exit the menu if the chest is gone
-      self:close_menu()
-    elseif post_id == "INVENTORY" then
-      self:open_chest_inventory_submenu(current_menu.tile_entity)
-    else
-      -- take one item out of the chest
-      local items = current_menu.tile_entity.data.items
-
-      if InventoryUtil.remove_item(items, post_id) then
-        InventoryUtil.add_item(self.items, post_id)
-        self:update_menu()
-      end
-    end
-  elseif current_menu.id == Menu.CHEST_INVENTORY_SUBMENU then
-    if current_menu.tile_entity.deleted then
-      -- just exit the menu if the chest is gone
-      self:close_menu()
-    else
-      -- move one item into the chest
-      local items = current_menu.tile_entity.data.items
-
-      if InventoryUtil.remove_item(self.items, post_id) then
-        InventoryUtil.add_item(items, post_id)
-        self:update_menu()
-      end
-    end
-  end
+  current_menu:handle_selection(post_id)
 end
 
-function Player:close_menu()
+function Player:close_menus()
   Net.close_bbs(self.id)
   self.menus = {}
 end
