@@ -35,12 +35,23 @@ local CraftingRecipes = {
   },
   CraftingTable = {
     {
+      result = { id = "BUCKET", count = 1 },
+      required = { { id = "IRON", count = 3 } }
+    },
+    {
       result = { id = "CHEST", count = 1 },
       required = { { id = "#planks", count = 8 } }
     },
     {
       result = { id = "FURNACE", count = 1 },
       required = { { id = "COBBLESTONE", count = 8 } }
+    },
+    {
+      result = { id = "STONE_CUTTER", count = 1 },
+      required = {
+        { id = "STONE", count = 3 },
+        { id = "IRON", count = 1 }
+      }
     },
   },
   Furnace = {
@@ -87,6 +98,72 @@ local CraftingRecipes = {
       }
     },
   },
+  StoneCutter = {
+    {
+      result = { id = "STONE_BRICKS", count = 1 },
+      required = { { id = "STONE", count = 1 } }
+    },
+    {
+      result = { id = "STONE_BRICKS", count = 8 },
+      required = { { id = "STONE", count = 8 } }
+    },
+    {
+      result = { id = "STONE_BRICK_STAIRS", count = 1 },
+      required = { { id = "STONE_BRICKS", count = 1 } }
+    },
+    {
+      result = { id = "STONE_BRICK_STAIRS", count = 8 },
+      required = { { id = "STONE_BRICKS", count = 8 } }
+    },
+    {
+      result = { id = "OAK_STAIRS", count = 1 },
+      required = { { id = "OAK_PLANKS", count = 1 } }
+    },
+    {
+      result = { id = "OAK_STAIRS", count = 8 },
+      required = { { id = "OAK_PLANKS", count = 8 } }
+    },
+    {
+      result = { id = "BIRCH_STAIRS", count = 1 },
+      required = { { id = "BIRCH_PLANKS", count = 1 } }
+    },
+    {
+      result = { id = "BIRCH_STAIRS", count = 8 },
+      required = { { id = "BIRCH_PLANKS", count = 8 } }
+    },
+    {
+      result = { id = "SPRUCE_STAIRS", count = 1 },
+      required = { { id = "SPRUCE_PLANKS", count = 1 } }
+    },
+    {
+      result = { id = "SPRUCE_STAIRS", count = 8 },
+      required = { { id = "SPRUCE_PLANKS", count = 8 } }
+    },
+    {
+      result = { id = "JUNGLE_STAIRS", count = 1 },
+      required = { { id = "JUNGLE_PLANKS", count = 1 } }
+    },
+    {
+      result = { id = "JUNGLE_STAIRS", count = 8 },
+      required = { { id = "JUNGLE_PLANKS", count = 8 } }
+    },
+    {
+      result = { id = "DARK_OAK_STAIRS", count = 1 },
+      required = { { id = "DARK_OAK_PLANKS", count = 1 } }
+    },
+    {
+      result = { id = "DARK_OAK_STAIRS", count = 8 },
+      required = { { id = "DARK_OAK_PLANKS", count = 8 } }
+    },
+    {
+      result = { id = "ACACIA_STAIRS", count = 1 },
+      required = { { id = "ACACIA_PLANKS", count = 1 } }
+    },
+    {
+      result = { id = "ACACIA_STAIRS", count = 8 },
+      required = { { id = "ACACIA_PLANKS", count = 8 } }
+    },
+  }
 }
 
 return CraftingRecipes

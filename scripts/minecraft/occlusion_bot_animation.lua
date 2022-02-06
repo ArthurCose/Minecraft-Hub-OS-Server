@@ -21,7 +21,7 @@ end
 
 local function generate()
   local cols = 8
-  local rows = 7
+  local rows = 11
 
   local animation = "animation state=\"IDLE_U\"\nempty\n\nanimation state=\"IDLE_D\"\nempty\n\n"
 

@@ -3,6 +3,7 @@ local Blocks = require("scripts/minecraft/data/blocks")
 local BlockLoot = {
   [Blocks.DIRT] = { "DIRT" },
   [Blocks.GRASS] = { "DIRT" },
+  [Blocks.DIRT_PATH] = { "DIRT" },
   [Blocks.MYCELIUM] = { "DIRT" },
   [Blocks.PODZOL] = { "DIRT" },
 
@@ -44,7 +45,30 @@ local BlockLoot = {
 
   [Blocks.CRAFTING_TABLE] = { "CRAFTING_TABLE" },
   [Blocks.FURNACE] = { "FURNACE" },
+  [Blocks.FURNACE_E] = { "FURNACE" },
+  [Blocks.FURNACE_N] = { "FURNACE" },
+  [Blocks.CHEST_E] = { "CHEST" },
+  [Blocks.CHEST_N] = { "CHEST" },
   [Blocks.CHEST] = { "CHEST" },
+  [Blocks.STONE_CUTTER] = { "STONE_CUTTER" },
+
+  [Blocks.OAK_SAPLING] = { "OAK_SAPLING" },
+  [Blocks.GLASS] = { nil },
+
+  [Blocks.OAK_PLANKS] = { "OAK_PLANKS" },
+  [Blocks.OAK_STAIRS_E] = { "OAK_STAIRS" },
+  [Blocks.OAK_STAIRS_N] = { "OAK_STAIRS" },
+  [Blocks.OAK_STAIRS_W] = { "OAK_STAIRS" },
+  [Blocks.OAK_STAIRS_S] = { "OAK_STAIRS" },
+
+  [Blocks.STONE_BRICKS] = { "STONE_BRICKS" },
+  [Blocks.STONE_BRICK_STAIRS] = { "STONE_BRICK_STAIRS" },
 }
+
+for block_name, block_id in pairs(Blocks) do
+  if BlockLoot[block_id] == nil then
+    print("Missing BlockLoot definition for " .. block_name)
+  end
+end
 
 return BlockLoot

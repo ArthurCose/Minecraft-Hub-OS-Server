@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.5" tiledversion="1.7.2" name="collidable blocks" tilewidth="29" tileheight="31" tilecount="56" columns="8">
+<tileset version="1.5" tiledversion="1.7.2" name="collidable blocks" tilewidth="29" tileheight="31" tilecount="104" columns="8">
  <tileoffset x="-1" y="-12"/>
- <image source="blocks.png" width="232" height="217"/>
+ <image source="blocks.png" width="232" height="406"/>
  <tile id="0">
   <objectgroup draworder="index" id="2">
    <object id="6" x="-35" y="-30" width="86" height="77"/>
@@ -280,6 +280,81 @@
  <tile id="55">
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="63">
+  <objectgroup draworder="index" id="4">
+   <object id="6" x="-28" y="-22" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="64">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-27" y="-23" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="65">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-29" y="-22" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="66">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-30" y="-23" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="67">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-27" y="-21" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="68">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-36" y="-22" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="72">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-28" y="-22" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="73">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-24" y="-18" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="74">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-31" y="-22" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="75">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-26" y="-22" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="76">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-30" y="-19" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="81">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-34" y="-15" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="82">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-29" y="-35" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="83">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-28" y="-19" width="86" height="77"/>
+  </objectgroup>
+ </tile>
+ <tile id="84">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="-21" y="-22" width="86" height="77"/>
   </objectgroup>
  </tile>
 </tileset>

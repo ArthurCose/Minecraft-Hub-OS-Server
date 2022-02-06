@@ -1,8 +1,9 @@
 local Blocks = {
   DIRT = 0,
   GRASS = 1,
-  MYCELIUM = 2,
-  PODZOL = 3,
+  DIRT_PATH = 2,
+  MYCELIUM = 3,
+  PODZOL = 4,
 
   BEDROCK = 8,
   DEEPSLATE = 9,
@@ -41,8 +42,25 @@ local Blocks = {
   DIAMOND_ORE = 47,
 
   CRAFTING_TABLE = 48,
-  FURNACE = 49,
-  CHEST = 50,
+  FURNACE_E = 49,
+  FURNACE_N = 50,
+  FURNACE = 51,
+  CHEST_E = 52,
+  CHEST_N = 53,
+  CHEST = 54,
+  STONE_CUTTER = 55,
+
+  OAK_SAPLING = 56,
+  GLASS = 63,
+
+  OAK_PLANKS = 64,
+  OAK_STAIRS_E = 65,
+  OAK_STAIRS_N = 66,
+  OAK_STAIRS_W = 67,
+  OAK_STAIRS_S = 68,
+
+  STONE_BRICKS = 72,
+  STONE_BRICK_STAIRS = 73,
 }
 
 return Blocks

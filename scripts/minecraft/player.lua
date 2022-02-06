@@ -138,8 +138,24 @@ local function consume_item(player)
   end
 end
 
+function get_block_direction_suffix(player, int_x, int_y)
+  if player.int_x > int_x then
+    return "_E"
+  elseif player.int_y > int_y then
+    return "_N"
+  elseif player.int_x < int_x then
+    return "_W"
+  elseif player.int_y < int_y then
+    return "_S"
+  end
+
+  -- pick a nice direction in case there's no directionless version
+  return "_N"
+end
+
 local function place_block(player, x, y, z)
-  local block = Blocks[player.selected_item.id]
+  local direction_suffix = get_block_direction_suffix(player, x, y)
+  local block = Blocks[player.selected_item.id .. direction_suffix] or Blocks[player.selected_item.id]
 
   if player.instance.world:set_block(x, y, z, block) then
     consume_item(player)
@@ -156,16 +172,17 @@ function Player:try_place_block(x, y, z)
     return
   end
 
-  local block = Blocks[self.selected_item.id]
+  x = math.floor(x)
+  y = math.floor(y)
+  z = math.floor(z)
+
+  local direction_suffix = get_block_direction_suffix(self, x, y)
+  local block = Blocks[self.selected_item.id .. direction_suffix] or Blocks[self.selected_item.id]
 
   if not block then
     -- not placeable
     return
   end
-
-  x = math.floor(x)
-  y = math.floor(y)
-  z = math.floor(z)
 
   local world = self.instance.world
 
@@ -375,9 +392,9 @@ function Player:try_interact(x, y, z)
 
   if block_id == Blocks.CRAFTING_TABLE then
     self:open_crafting_menu("Crafting Table", CraftingRecipes.CraftingTable)
-  elseif block_id == Blocks.FURNACE then
+  elseif block_id == Blocks.FURNACE or block_id == Blocks.FURNACE_E or block_id == Blocks.FURNACE_N then
     self:open_crafting_menu("Furnace", CraftingRecipes.Furnace)
-  elseif block_id == Blocks.CHEST then
+  elseif block_id == Blocks.CHEST or block_id == Blocks.CHEST_E or block_id == Blocks.CHEST_N then
     local tile_entity = world:request_tile_entity(x, y, z)
     self:open_chest(tile_entity)
   end
