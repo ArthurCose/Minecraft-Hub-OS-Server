@@ -223,4 +223,8 @@ local CraftingRecipes = {
   }
 }
 
+for _, recipe in ipairs(CraftingRecipes.Inventory) do
+  CraftingRecipes.CraftingTable[#CraftingRecipes.CraftingTable+1] = recipe
+end
+
 return CraftingRecipes
