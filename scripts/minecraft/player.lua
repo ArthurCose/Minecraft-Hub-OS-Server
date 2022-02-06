@@ -1,8 +1,10 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local BlockLoot = require("scripts/minecraft/data/block_loot")
+local Tags = require("scripts/minecraft/data/tags")
 local CraftingRecipes = require("scripts/minecraft/data/crafting_recipes")
 local CraftingUtil = require("scripts/minecraft/crafting_util")
 local InventoryUtil = require("scripts/minecraft/inventory_util")
+local includes = require("scripts/lib/includes")
 
 local Player = {}
 
@@ -46,7 +48,8 @@ function Player:new(player_id)
     int_y = 0,
     int_z = 0,
     spawned = false,
-    changing_z = false
+    changing_z = false,
+    textbox_promise_resolvers = {}
   }
 
   setmetatable(player, self)
@@ -160,7 +163,16 @@ local function place_block(player, x, y, z)
   local direction_suffix = get_block_direction_suffix(player, x, y)
   local block = Blocks[player.selected_item.id .. direction_suffix] or Blocks[player.selected_item.id]
 
-  if player.instance.world:set_block(x, y, z, block) then
+  local world = player.instance.world
+
+  if world:set_block(x, y, z, block) then
+    if includes(Tags["#signs"], player.selected_item.id) then
+      local tile_entity = world:request_tile_entity(x, y, z)
+      player:prompt(17).and_then(function(response)
+        tile_entity.data.text = response
+      end)
+    end
+
     consume_item(player)
     player:lockout()
     return true
@@ -172,7 +184,7 @@ end
 function Player:try_place_block(x, y, z)
   if not self.selected_item then
     -- nothing to place
-    return
+    return false
   end
 
   x = math.floor(x)
@@ -184,7 +196,7 @@ function Player:try_place_block(x, y, z)
 
   if not block then
     -- not placeable
-    return
+    return false
   end
 
   local world = self.instance.world
@@ -400,6 +412,9 @@ function Player:try_interact(x, y, z)
   elseif block_id == Blocks.CHEST or block_id == Blocks.CHEST_E or block_id == Blocks.CHEST_N then
     local tile_entity = world:request_tile_entity(x, y, z)
     self:open_chest(tile_entity)
+  elseif block_id == Blocks.OAK_SIGN_N or block_id == Blocks.OAK_SIGN_S or block_id == Blocks.OAK_SIGN_E or block_id == Blocks.OAK_SIGN_W then
+    local tile_entity = world:request_tile_entity(x, y, z)
+    self:message(tile_entity.data.text)
   end
 end
 
@@ -563,6 +578,64 @@ end
 
 function Player:handle_board_close()
   self.menus[#self.menus] = nil
+end
+
+-- textbox handling taken from the liberation server --
+
+local function create_textbox_promise(self)
+  if self.disconnected then
+    return Async.create_promise(function(resolve)
+      resolve()
+    end)
+  end
+
+  return Async.create_promise(function(resolve)
+    self.textbox_promise_resolvers[#self.textbox_promise_resolvers+1] = resolve
+  end)
+end
+
+-- all messages to this player should be made through this class
+function Player:message(message, texture_path, animation_path)
+  Net.message_player(self.id, message, texture_path, animation_path)
+
+  return create_textbox_promise(self)
+end
+
+-- all messages to this player should be made through this class
+function Player:message_with_mug(message)
+  return self:message(message, self.avatar.texture_path, self.avatar.animation_path)
+end
+
+-- all questions to this player should be made through this class
+function Player:question(question, texture_path, animation_path)
+  Net.question_player(self.id, question, texture_path, animation_path)
+
+  return create_textbox_promise(self)
+end
+
+-- all questions to this player should be made through this class
+function Player:question_with_mug(question)
+  return self:question(question, self.avatar.texture_path, self.avatar.animation_path)
+end
+
+-- all quizzes to this player should be made through this class
+function Player:quiz(a, b, c, texture_path, animation_path)
+  Net.quiz_player(self.id, a, b, c, texture_path, animation_path)
+
+  return create_textbox_promise(self)
+end
+
+-- all prompts to this player should be made through this class
+function Player:prompt(character_limit, default_text)
+  Net.prompt_player(self.id, character_limit, default_text)
+
+  return create_textbox_promise(self)
+end
+
+-- will throw if a textbox is sent to the player using Net directly
+function Player:handle_textbox_response(response)
+  local resolve = table.remove(self.textbox_promise_resolvers, 1)
+  resolve(response)
 end
 
 return Player

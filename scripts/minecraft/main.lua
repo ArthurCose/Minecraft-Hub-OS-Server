@@ -58,6 +58,11 @@ function handle_board_close(player_id)
   player:handle_board_close()
 end
 
+function handle_textbox_response(player_id, response)
+  local player = players[player_id]
+  player:handle_textbox_response(response)
+end
+
 function handle_player_move(player_id, x, y, z)
   local player = players[player_id]
   player:handle_player_move(x, y, z)

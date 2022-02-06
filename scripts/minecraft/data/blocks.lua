@@ -58,6 +58,10 @@ local Blocks = {
   OAK_STAIRS_N = 66,
   OAK_STAIRS_W = 67,
   OAK_STAIRS_S = 68,
+  OAK_SIGN_E = 69,
+  OAK_SIGN_W = 69,
+  OAK_SIGN_N = 70,
+  OAK_SIGN_S = 70,
 
   STONE_BRICKS = 72,
   STONE_BRICK_STAIRS = 73,

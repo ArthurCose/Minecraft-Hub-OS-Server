@@ -29,7 +29,7 @@ local CraftingRecipes = {
       required = { { id = "ACACIA_LOG", count = 1 } }
     },
     {
-      result = { id = "STICKS", count = 4 },
+      result = { id = "STICK", count = 4 },
       required = { { id = "#planks", count = 2 } }
     },
   },
@@ -37,6 +37,13 @@ local CraftingRecipes = {
     {
       result = { id = "BUCKET", count = 1 },
       required = { { id = "IRON", count = 3 } }
+    },
+    {
+      result = { id = "OAK_SIGN", count = 1 },
+      required = {
+        { id = "OAK_PLANKS", count = 6 },
+        { id = "STICK", count = 1 }
+      }
     },
     {
       result = { id = "CHEST", count = 1 },

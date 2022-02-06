@@ -60,6 +60,10 @@ local BlockLoot = {
   [Blocks.OAK_STAIRS_N] = { "OAK_STAIRS" },
   [Blocks.OAK_STAIRS_W] = { "OAK_STAIRS" },
   [Blocks.OAK_STAIRS_S] = { "OAK_STAIRS" },
+  [Blocks.OAK_SIGN_E] = { "OAK_SIGN" },
+  [Blocks.OAK_SIGN_W] = { "OAK_SIGN" },
+  [Blocks.OAK_SIGN_N] = { "OAK_SIGN" },
+  [Blocks.OAK_SIGN_S] = { "OAK_SIGN" },
 
   [Blocks.STONE_BRICKS] = { "STONE_BRICKS" },
   [Blocks.STONE_BRICK_STAIRS] = { "STONE_BRICK_STAIRS" },
