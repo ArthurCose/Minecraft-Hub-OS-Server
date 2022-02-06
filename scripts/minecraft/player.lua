@@ -20,8 +20,8 @@ function Player:new(player_id)
     menus = {}, -- { id, (menu specific) }
     items = { -- { id, count }[]
     -- starting items
+      { id = "OAK_SAPLING", count = 1 },
       { id = "COBBLESTONE", count = 8 },
-      { id = "OAK_LOG", count = 8 },
       { id = "DIRT", count = 16 }
     },
     action = PlayerActions.PUNCH,
@@ -152,7 +152,7 @@ local function place_block(player, x, y, z)
 
   local world = player.instance.world
 
-  if world:set_block(x, y, z, block) then
+  if not world:has_player_at(x, y, z) and world:set_block(x, y, z, block) then
     if includes(Tags["#signs"], player.selected_item.id) then
       local tile_entity = world:request_tile_entity(x, y, z)
       player:prompt(17).and_then(function(response)

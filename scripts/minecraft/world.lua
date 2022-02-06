@@ -1,7 +1,9 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local TileEntities = require("scripts/minecraft/data/tile_entities")
 local SyncedWorldInstance = require("scripts/minecraft/synced_world_instance")
+local BlockTicks = require("scripts/minecraft/block_ticks")
 local includes = require("scripts/lib/includes")
+
 
 local World = {
   player_layer_offset = 1,
@@ -149,13 +151,6 @@ function World:set_block(x, y, z, block_id)
   local original_block_id = row[x + 1]
   if original_block_id == nil then return false end
 
-  for _, player in pairs(self.players) do
-    if player.int_x == x and player.int_y == y and (player.int_z == z or player.int_z + World.layer_diff == z) then
-      -- player standing where we want to place the block
-      return false
-    end
-  end
-
   if includes(TileEntities, original_block_id) then
     local tile_entity
     local index
@@ -191,6 +186,17 @@ function World:set_block(x, y, z, block_id)
   end
 
   return true
+end
+
+function World:has_player_at(int_x, int_y, int_z)
+  for _, player in pairs(self.players) do
+    if player.int_x == int_x and player.int_y == int_y and (player.int_z == int_z or player.int_z + World.layer_diff == int_z) then
+      -- player standing where we want to place the block
+      return true
+    end
+  end
+
+  return false
 end
 
 function World:set_spawn_position(x, y)
@@ -275,6 +281,22 @@ end
 function World:tick()
   for _, player in pairs(self.players) do
     player.instance:tick()
+  end
+
+  for _ = 1, self.width * self.height * self.layers / 64 do
+    local layerIndex = math.random(#self.blocks)
+    local layer = self.blocks[layerIndex]
+    local y = math.random(#layer)
+    local row = layer[y]
+    local x = math.random(#row)
+
+    local block_id = row[x]
+
+    local update = BlockTicks[block_id]
+
+    if update then
+      update(self, x - 1, y - 1, layerIndex * self.layer_diff)
+    end
   end
 end
 
