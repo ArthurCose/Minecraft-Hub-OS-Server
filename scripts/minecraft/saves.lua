@@ -43,6 +43,7 @@ function Saves.load(world, path)
     world.data = json.decode(content)
 
     local translator = create_translator(world.data.block_dictionary, Blocks)
+    world.data.block_dictionary = Blocks
 
     -- translate using the block dictionary
     for _, layer in ipairs(world.data.blocks) do
