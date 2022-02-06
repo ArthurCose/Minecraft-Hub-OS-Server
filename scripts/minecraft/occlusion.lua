@@ -167,7 +167,13 @@ function Occlusion:despawn_out_of_range(int_z)
   end
 
   for i = #pending_removal, 1, -1 do
-    table.remove(bot_layer, pending_removal[i])
+    local pillar = table.remove(bot_layer, pending_removal[i])
+
+    for _, bot in ipairs(pillar.bots) do
+      if bot.id then
+        Net.remove_bot(bot.id)
+      end
+    end
   end
 end
 
