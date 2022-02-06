@@ -56,10 +56,10 @@ function InventoryUtil.remove_item(items, item_id, count)
 
     -- remove items
     for i = #pending_removal, 1, -1 do
-      table.remove(items, i)
+      table.remove(items, pending_removal[i])
     end
 
-    return total_matching >= count
+    return true
   else
     -- remove item by id
     for i, item in ipairs(items) do
