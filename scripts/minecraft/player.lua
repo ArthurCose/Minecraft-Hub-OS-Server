@@ -47,8 +47,18 @@ end
 function Player:tick()
   self:update_menu()
 
-  if self.spawned and not self.changing_z and self.instance.world:get_block(self.int_x, self.int_y, self.int_z - 2) == Blocks.AIR then
+  if not self.spawned or self.changing_z then
+    return
+  end
+
+  local world = self.instance.world
+
+  if world:get_block(self.int_x, self.int_y, self.int_z - 2) == Blocks.AIR then
     self:fall_towards(self.x, self.y)
+  end
+
+  if includes(Liquids.Lava, world:get_block(self.int_x, self.int_y, self.int_z)) then
+    self:respawn()
   end
 end
 
@@ -379,15 +389,18 @@ function Player:fall_towards(x, y)
 
   Async.sleep(time).and_then(function()
     if land_z == 0 then
-      -- return to spawn
-      local spawn = Net.get_spawn_position(self.instance.id)
-      Net.teleport_player(self.id, true, spawn.x, spawn.y, spawn.z)
-
-      self.changing_z = true
-      Async.sleep(1).and_then(function()
-        self.changing_z = false
-      end)
+      self:respawn()
     end
+  end)
+end
+
+function Player:respawn()
+  local spawn = Net.get_spawn_position(self.instance.id)
+  Net.teleport_player(self.id, true, spawn.x, spawn.y, spawn.z)
+
+  self.changing_z = true
+  Async.sleep(1).and_then(function()
+    self.changing_z = false
   end)
 end
 
