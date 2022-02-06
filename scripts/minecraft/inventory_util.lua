@@ -1,5 +1,8 @@
 -- inventory/items format = { id: string, count: int }
 
+local Tags = require("scripts/minecraft/data/tags")
+local includes = require("scripts/lib/includes")
+
 local InventoryUtil = {}
 
 -- defaults to adding one item
@@ -23,19 +26,83 @@ function InventoryUtil.add_item(items, item_id, count)
   }
 end
 
--- defaults to removing one item
+-- defaults to removing one item, returns true if anything is removed
 function InventoryUtil.remove_item(items, item_id, count)
   count = count or 1
 
-  for i, item in ipairs(items) do
-    if item.id == item_id then
-      item.count = item.count - count
+  local matching_tag = Tags[item_id]
 
-      if item.count == 0 then
-        table.remove(items, i)
+  if matching_tag then
+    -- remove items with matching id
+    local total_matching = 0
+    local pending_removal = {}
+
+    for i, item in ipairs(items) do
+      if includes(matching_tag, item.id) then
+        local old_count = item.count
+        item.count = item.count - (count - total_matching)
+        total_matching = total_matching + old_count
+
+        if item.count <= 0 then
+          pending_removal[#pending_removal+1] = i
+        end
+
+        if total_matching >= count then
+          -- removed enough
+          break
+        end
       end
+    end
 
-      return true
+    -- remove items
+    for i = #pending_removal, 1, -1 do
+      table.remove(items, i)
+    end
+
+    return total_matching >= count
+  else
+    -- remove item by id
+    for i, item in ipairs(items) do
+      if item.id == item_id then
+        item.count = item.count - count
+
+        if item.count <= 0 then
+          table.remove(items, i)
+        end
+
+        return true
+      end
+    end
+  end
+
+  return false
+end
+
+-- defaults to testing for a minimum of one item
+function InventoryUtil.has_item(items, item_id, count)
+  count = count or 1
+
+  local matching_tag = Tags[item_id]
+
+  if matching_tag then
+    -- count items matching ids in the tag
+    local total_count = 0
+
+    for _, item in ipairs(items) do
+      if includes(matching_tag, item.id) then
+        total_count = total_count + item.count
+
+        if total_count >= count then
+          return true
+        end
+      end
+    end
+  else
+    -- find item by id and test count
+    for _, item in ipairs(items) do
+      if item.id == item_id and item.count >= count then
+        return true
+      end
     end
   end
 

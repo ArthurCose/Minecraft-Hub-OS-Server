@@ -1,5 +1,7 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local BlockLoot = require("scripts/minecraft/data/block_loot")
+local CraftingRecipes = require("scripts/minecraft/data/crafting_recipes")
+local CraftingUtil = require("scripts/minecraft/crafting_util")
 local InventoryUtil = require("scripts/minecraft/inventory_util")
 
 local Player = {}
@@ -7,8 +9,9 @@ local Player = {}
 local Menu = {
   ACTIONS = 0,
   INVENTORY = 1,
-  CHEST = 2,
-  CHEST_INVENTORY_SUBMENU = 3,
+  CRAFT = 2,
+  CHEST = 3,
+  CHEST_INVENTORY_SUBMENU = 4,
   COLOR = { r = 139, g = 139, b = 139 }
 }
 
@@ -27,7 +30,9 @@ function Player:new(player_id)
     menus = {}, -- { id, (menu specific) }
     items = { -- { id, count }[]
     -- starting items
-      { id = "COBBLESTONE", count = 8 }
+      { id = "COBBLESTONE", count = 8 },
+      { id = "OAK_LOG", count = 8 },
+      { id = "DIRT", count = 16 }
     },
     action = Action.PUNCH,
     selected_item = nil,
@@ -368,7 +373,11 @@ function Player:try_interact(x, y, z)
   local world = self.instance.world
   local block_id = world:get_block(x, y, z)
 
-  if block_id == Blocks.CHEST then
+  if block_id == Blocks.CRAFTING_TABLE then
+    self:open_crafting_menu("Crafting Table", CraftingRecipes.CraftingTable)
+  elseif block_id == Blocks.FURNACE then
+    self:open_crafting_menu("Furnace", CraftingRecipes.Furnace)
+  elseif block_id == Blocks.CHEST then
     local tile_entity = world:request_tile_entity(x, y, z)
     self:open_chest(tile_entity)
   end
@@ -399,6 +408,15 @@ function Player:open_inventory()
 
   Net.open_board(self.id, "Inventory", Menu.COLOR, posts)
   self.menus[#self.menus+1] = { id = Menu.INVENTORY }
+end
+
+function Player:open_crafting_menu(name, recipes)
+  local posts = {}
+
+  CraftingUtil.generate_recipe_posts(recipes, self.items, posts)
+
+  Net.open_board(self.id, name, Menu.COLOR, posts)
+  self.menus[#self.menus+1] = { id = Menu.CRAFT, recipes = recipes }
 end
 
 function Player:open_chest(tile_entity)
@@ -467,7 +485,7 @@ function Player:handle_post_selection(post_id)
     end
   elseif current_menu.id == Menu.INVENTORY then
     if post_id == "CRAFT" then
-      Net.message_player(self.id, "Not yet available")
+      self:open_crafting_menu("Craft", CraftingRecipes.Inventory)
     else
       -- selecting an item
       for i, item in ipairs(self.items) do
@@ -484,6 +502,9 @@ function Player:handle_post_selection(post_id)
 
       self:close_menu()
     end
+  elseif current_menu.id == Menu.CRAFT then
+    CraftingUtil.craft(current_menu.recipes, self.items, post_id)
+    self:close_menu()
   elseif current_menu.id == Menu.CHEST then
     if current_menu.tile_entity.deleted then
       -- just exit the menu if the chest is gone
