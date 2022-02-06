@@ -2,13 +2,13 @@ local Blocks = require("scripts/minecraft/data/blocks")
 
 local BlockLoot = {
   [Blocks.DIRT] = { "DIRT" },
-  [Blocks.GRASS] = { "DIRT" },
+  [Blocks.GRASS_BLOCK] = { "DIRT" },
   [Blocks.DIRT_PATH] = { "DIRT" },
   [Blocks.MYCELIUM] = { "DIRT" },
   [Blocks.PODZOL] = { "DIRT" },
 
-  [Blocks.BEDROCK] = { nil },
-  [Blocks.DEEPSLATE] = { nil },
+  [Blocks.BEDROCK] = {},
+  [Blocks.DEEPSLATE] = {},
   [Blocks.STONE] = { "COBBLESTONE" },
   [Blocks.ANDESITE] = { "ANDESITE" },
   [Blocks.DYORITE] = { "DYORITE" },
@@ -16,7 +16,7 @@ local BlockLoot = {
   [Blocks.GRAVEL] = { "GRAVEL" },
   [Blocks.SAND] = { "SAND" },
 
-  [Blocks.AIR] = { nil },
+  [Blocks.AIR] = {},
   [Blocks.COBBLESTONE] = { "COBBLESTONE" },
   [Blocks.SANDSTONE] = { "SANDSTONE" },
 
@@ -52,8 +52,25 @@ local BlockLoot = {
   [Blocks.CHEST] = { "CHEST" },
   [Blocks.STONE_CUTTER] = { "STONE_CUTTER" },
 
+  [Blocks.LAVA_4] = {},
+  [Blocks.LAVA_3] = {},
+  [Blocks.LAVA_2] = {},
+  [Blocks.LAVA_1] = {},
+  [Blocks.LAVA_FULL] = {},
+  [Blocks.OBSIDIAN] = { "OBSIDIAN" },
+  [Blocks.WATER_FULL] = {},
+
+  [Blocks.WATER_8] = {},
+  [Blocks.WATER_7] = {},
+  [Blocks.WATER_6] = {},
+  [Blocks.WATER_5] = {},
+  [Blocks.WATER_4] = {},
+  [Blocks.WATER_3] = {},
+  [Blocks.WATER_2] = {},
+  [Blocks.WATER_1] = {},
+
   [Blocks.OAK_SAPLING] = { "OAK_SAPLING" },
-  [Blocks.GLASS] = { nil },
+  [Blocks.GLASS] = {},
 
   [Blocks.OAK_PLANKS] = { "OAK_PLANKS" },
   [Blocks.OAK_STAIRS_E] = { "OAK_STAIRS" },

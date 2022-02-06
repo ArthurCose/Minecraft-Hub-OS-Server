@@ -1,3 +1,5 @@
+local append_table = require("scripts/lib/append_table")
+
 local CraftingRecipes = {
   Inventory = {
     { -- temporary recipe? stone cutter in the future
@@ -223,8 +225,6 @@ local CraftingRecipes = {
   }
 }
 
-for _, recipe in ipairs(CraftingRecipes.Inventory) do
-  CraftingRecipes.CraftingTable[#CraftingRecipes.CraftingTable+1] = recipe
-end
+append_table(CraftingRecipes.CraftingTable, CraftingRecipes.Inventory)
 
 return CraftingRecipes

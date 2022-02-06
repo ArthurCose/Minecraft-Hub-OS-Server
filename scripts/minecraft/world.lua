@@ -1,5 +1,6 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local TileEntities = require("scripts/minecraft/data/tile_entities")
+local NoCollision = require("scripts/minecraft/data/no_collision")
 local SyncedWorldInstance = require("scripts/minecraft/synced_world_instance")
 local BlockTicks = require("scripts/minecraft/block_ticks")
 local includes = require("scripts/lib/includes")
@@ -58,7 +59,7 @@ local function update_tile(world, x, y, z)
   local feet_block_z = render_block_z - World.player_layer_offset * World.layer_diff
   local feet_block_id = world:get_block(x, y, feet_block_z)
 
-  if feet_block_id ~= Blocks.AIR then
+  if not includes(NoCollision, feet_block_id) then
     -- block in the way
     set_tile(world, x, y, z, world.first_collidable_gid + render_block_id)
     return
@@ -67,7 +68,7 @@ local function update_tile(world, x, y, z)
   local head_block_z = feet_block_z + World.layer_diff
   local head_block_id = world:get_block(x, y, head_block_z)
 
-  if head_block_id ~= Blocks.AIR then
+  if not includes(NoCollision, head_block_id) then
     -- block in the way
     set_tile(world, x, y, z, world.first_collidable_gid + render_block_id)
     return
@@ -75,16 +76,18 @@ local function update_tile(world, x, y, z)
 
   local ground_block_id = world:get_block(x, y, feet_block_z - World.layer_diff)
 
-  if ground_block_id == Blocks.AIR and render_block_id == Blocks.AIR then
+  local can_walk = not includes(NoCollision, ground_block_id) or ground_block_id == Blocks.WATER_FULL
+
+  if can_walk then
+    -- we can walk through air if there's ground
+    set_tile(world, x, y, z, world.first_walkable_gid + render_block_id)
+  elseif render_block_id == Blocks.AIR then
     -- no ground
     -- just set it to blank if there's no collision and it should appear as air
     set_tile(world, x, y, z, 0)
-  elseif ground_block_id == Blocks.AIR then
+  else
     -- no floor to walk on
     set_tile(world, x, y, z, world.first_collidable_gid + render_block_id)
-  else
-    -- we can walk through air if there's ground
-    set_tile(world, x, y, z, world.first_walkable_gid + render_block_id)
   end
 end
 
@@ -295,7 +298,7 @@ function World:tick()
     local update = BlockTicks[block_id]
 
     if update then
-      update(self, x - 1, y - 1, layerIndex * self.layer_diff)
+      update(self, x - 1, y - 1, layerIndex * self.layer_diff, block_id)
     end
   end
 end

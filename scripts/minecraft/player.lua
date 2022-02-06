@@ -1,5 +1,6 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local BlockLoot = require("scripts/minecraft/data/block_loot")
+local Liquids = require("scripts/minecraft/data/liquids")
 local Tags = require("scripts/minecraft/data/tags")
 local MenuColors = require("scripts/minecraft/menu/menu_colors")
 local PrimaryMenu = require("scripts/minecraft/menu/primary_menu")
@@ -20,6 +21,8 @@ function Player:new(player_id)
     menus = {}, -- { id, (menu specific) }
     items = { -- { id, count }[]
     -- starting items
+      { id = "WATER_8", count = 1 },
+      { id = "WATER_3", count = 1 },
       { id = "OAK_SAPLING", count = 1 },
       { id = "COBBLESTONE", count = 8 },
       { id = "DIRT", count = 16 }
@@ -148,11 +151,11 @@ end
 
 local function place_block(player, x, y, z)
   local direction_suffix = get_block_direction_suffix(player, x, y)
-  local block = Blocks[player.selected_item.id .. direction_suffix] or Blocks[player.selected_item.id]
+  local block_id = Blocks[player.selected_item.id .. direction_suffix] or Blocks[player.selected_item.id]
 
   local world = player.instance.world
 
-  if not world:has_player_at(x, y, z) and world:set_block(x, y, z, block) then
+  if not world:has_player_at(x, y, z) and world:set_block(x, y, z, block_id) then
     if includes(Tags["#signs"], player.selected_item.id) then
       local tile_entity = world:request_tile_entity(x, y, z)
       player:prompt(17).and_then(function(response)
@@ -191,21 +194,21 @@ function Player:try_place_block(x, y, z)
   -- place a block below
   local floor_id = world:get_block(x, y, z - 2)
 
-  if floor_id == Blocks.AIR then
+  if floor_id == Blocks.AIR or includes(Liquids.Flowing, floor_id) then
     return place_block(self, x, y, z - 2)
   end
 
   -- place a block at feet
   local feet_id = world:get_block(x, y, z)
 
-  if feet_id == Blocks.AIR then
+  if feet_id == Blocks.AIR or includes(Liquids.Flowing, feet_id) then
     return place_block(self, x, y, z)
   end
 
   -- place a block at head
   local head_id = world:get_block(x, y, z + 2)
 
-  if head_id == Blocks.AIR then
+  if head_id == Blocks.AIR or includes(Liquids.Flowing, head_id) then
     return place_block(self, x, y, z + 2)
   end
 
@@ -215,13 +218,17 @@ end
 local function break_block(player, x, y, z)
   local block_id = player.instance.world:get_block(x, y, z)
 
-  if block_id == Blocks.BEDROCK or block_id == Blocks.AIR then
+  if block_id == Blocks.BEDROCK or block_id == Blocks.AIR or includes(Liquids.All, block_id) then
     return false
   end
 
   if player.instance.world:set_block(x, y, z, Blocks.AIR) then
     local loot = BlockLoot[block_id]
-    InventoryUtil.add_item(player.items, loot[math.random(#loot)])
+
+    if #loot > 0 then
+      InventoryUtil.add_item(player.items, loot[math.random(#loot)])
+    end
+
     player:lockout()
     return true
   end
@@ -255,13 +262,14 @@ function Player:try_break_block(x, y, z)
 
   -- break the block below
   local floor_id = world:get_block(x, y, z - 2)
+  local can_jump_through_floor = floor_id == Blocks.AIR or includes(Liquids.All, floor_id)
 
-  if floor_id ~= Blocks.AIR then
+  if not can_jump_through_floor then
     return break_block(self, x, y, z - 2)
   end
 
   -- try jumping down
-  if head_id == Blocks.AIR and feet_id == Blocks.AIR and floor_id == Blocks.AIR then
+  if head_id == Blocks.AIR and feet_id == Blocks.AIR and can_jump_through_floor then
     self:fall_towards(float_x, float_y)
   end
 end
@@ -278,7 +286,7 @@ function Player:try_jump_up(x, y, z)
   local head_id = world:get_block(int_x, int_y, int_z + 2)
   local ceiling_id = world:get_block(int_x, int_y, int_z + 4)
 
-  if feet_id ~= Blocks.AIR and head_id == Blocks.AIR and ceiling_id == Blocks.AIR then
+  if (feet_id ~= Blocks.AIR and not includes(Liquids.All, feet_id)) and head_id == Blocks.AIR and ceiling_id == Blocks.AIR then
     self:animate_jump_up(self.id, x, y, int_z + 2)
   end
 end
