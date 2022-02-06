@@ -166,7 +166,7 @@ local function place_block(player, x, y, z)
   if not world:has_player_at(x, y, z) and world:set_block(x, y, z, block_id) then
     if includes(Tags["#signs"], player.selected_item.id) then
       local tile_entity = world:request_tile_entity(x, y, z)
-      player:prompt(17).and_then(function(response)
+      player:prompt(17 * 3).and_then(function(response)
         tile_entity.data.text = response
       end)
     end
