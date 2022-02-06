@@ -3,7 +3,7 @@ local Tags = {
   ["#planks"] = { "OAK_PLANKS", "BIRCH_PLANKS", "SPRUCE_PLANKS", "JUNGLE_PLANKS", "DARK_OAK_PLANKS", "ACACIA_PLANKS" },
   ["#leaves"] = { "OAK_LEAVES", "BIRCH_LEAVES", "SPRUCE_LEAVES", "JUNGLE_LEAVES", "DARK_OAK_LEAVES", "ACACIA_LEAVES" },
   ["#saplings"] = { "OAK_SAPLING", "BIRCH_SAPLING", "SPRUCE_SAPLING", "JUNGLE_SAPLING", "DARK_OAK_SAPLING", "ACACIA_SAPLING" },
-  ["#fuel"] = { "CHARCOAL", "COAL" },
+  ["#coal"] = { "CHARCOAL", "COAL" },
   ["#signs"] = { "OAK_SIGN" },
 }
 

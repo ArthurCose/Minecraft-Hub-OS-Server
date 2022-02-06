@@ -71,38 +71,80 @@ local CraftingRecipes = {
   },
   Furnace = {
     {
+      result = { id = "IRON", count = 8 },
+      required = {
+        { id = "RAW_IRON", count = 8 },
+        { id = "#coal", count = 1 }
+      }
+    },
+    {
       result = { id = "IRON", count = 1 },
       required = {
         { id = "RAW_IRON", count = 1 },
-        { id = "#fuel", count = 1 }
+        { id = "#planks", count = 1 }
+      }
+    },
+    {
+      result = { id = "GOLD", count = 8 },
+      required = {
+        { id = "RAW_GOLD", count = 8 },
+        { id = "#coal", count = 1 }
       }
     },
     {
       result = { id = "GOLD", count = 1 },
       required = {
         { id = "RAW_GOLD", count = 1 },
-        { id = "#fuel", count = 1 }
+        { id = "#planks", count = 1 }
+      }
+    },
+    {
+      result = { id = "COPPER", count = 8 },
+      required = {
+        { id = "RAW_COPPER", count = 8 },
+        { id = "#coal", count = 1 }
       }
     },
     {
       result = { id = "COPPER", count = 1 },
       required = {
         { id = "RAW_COPPER", count = 1 },
-        { id = "#fuel", count = 1 }
+        { id = "#planks", count = 1 }
+      }
+    },
+    {
+      result = { id = "STONE", count = 8 },
+      required = {
+        { id = "COBBLESTONE", count = 8 },
+        { id = "#coal", count = 1 }
       }
     },
     {
       result = { id = "STONE", count = 1 },
       required = {
         { id = "COBBLESTONE", count = 1 },
-        { id = "#fuel", count = 1 }
+        { id = "#planks", count = 1 }
+      }
+    },
+    {
+      result = { id = "GLASS", count = 8 },
+      required = {
+        { id = "SAND", count = 8 },
+        { id = "#coal", count = 1 }
       }
     },
     {
       result = { id = "GLASS", count = 1 },
       required = {
         { id = "SAND", count = 1 },
-        { id = "#fuel", count = 1 }
+        { id = "#planks", count = 1 }
+      }
+    },
+    {
+      result = { id = "CHARCOAL", count = 8 },
+      required = {
+        { id = "#logs", count = 8 },
+        { id = "#coal", count = 1 }
       }
     },
     {
