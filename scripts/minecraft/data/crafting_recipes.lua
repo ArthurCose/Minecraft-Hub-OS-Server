@@ -1,5 +1,9 @@
 local CraftingRecipes = {
   Inventory = {
+    { -- temporary recipe? stone cutter in the future
+      result = { id = "STONE_BRICKS", count = 4 },
+      required = { { id = "STONE", count = 4 } }
+    },
     {
       result = { id = "CRAFTING_TABLE", count = 1 },
       required = { { id = "#planks", count = 4 } }
@@ -37,6 +41,10 @@ local CraftingRecipes = {
     {
       result = { id = "BUCKET", count = 1 },
       required = { { id = "IRON", count = 3 } }
+    },
+    { -- temporary recipe? (stone cutter in the future)
+      result = { id = "OAK_STAIRS", count = 4 },
+      required = { { id = "OAK_PLANKS", count = 6 } }
     },
     {
       result = { id = "OAK_SIGN", count = 1 },
