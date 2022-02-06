@@ -212,7 +212,7 @@ function World:set_spawn_position(x, y)
   self.data.spawn_x = x
   self.data.spawn_y = y
 
-  for z = World.player_layer_offset * World.layer_diff, self.layers - 1, World.layer_diff do
+  for z = World.player_layer_offset * World.layer_diff, self.layers * World.layer_diff, World.layer_diff do
     local id = self:get_block(x, y, z)
 
     if id == Blocks.AIR then
@@ -223,7 +223,7 @@ function World:set_spawn_position(x, y)
 
   Net.set_spawn_position(self.area_id, x + .5, y + .5, self.data.spawn_z)
 
-  for _, player in ipairs(self.players) do
+  for _, player in pairs(self.players) do
     Net.set_spawn_position(player.instance.id, x + .5, y + .5, self.data.spawn_z)
   end
 end
