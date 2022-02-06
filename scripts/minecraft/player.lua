@@ -12,7 +12,10 @@ local Menu = {
   CRAFT = 2,
   CHEST = 3,
   CHEST_INVENTORY_SUBMENU = 4,
-  COLOR = { r = 139, g = 139, b = 139 }
+  DEFAULT_COLOR = { r = 150, g = 150, b = 150 },
+  CRAFTING_TABLE_COLOR = { r = 110, g = 55, b = 35 },
+  FURNACE_COLOR = { r = 100, g = 100, b = 100 },
+  CHEST_COLOR = { r = 130, g = 86, b = 28 }
 }
 
 local Action = {
@@ -391,9 +394,9 @@ function Player:try_interact(x, y, z)
   local block_id = world:get_block(x, y, z)
 
   if block_id == Blocks.CRAFTING_TABLE then
-    self:open_crafting_menu("Crafting Table", CraftingRecipes.CraftingTable)
+    self:open_crafting_menu("Crafting Table", CraftingRecipes.CraftingTable, Menu.CRAFTING_TABLE_COLOR)
   elseif block_id == Blocks.FURNACE or block_id == Blocks.FURNACE_E or block_id == Blocks.FURNACE_N then
-    self:open_crafting_menu("Furnace", CraftingRecipes.Furnace)
+    self:open_crafting_menu("Furnace", CraftingRecipes.Furnace, Menu.FURNACE_COLOR)
   elseif block_id == Blocks.CHEST or block_id == Blocks.CHEST_E or block_id == Blocks.CHEST_N then
     local tile_entity = world:request_tile_entity(x, y, z)
     self:open_chest(tile_entity)
@@ -412,7 +415,7 @@ function Player:open_menu()
     { id = "INTERACT", read = true, title = "INTERACT", author = "" },
   }
 
-  Net.open_board(self.id, "Actions", Menu.COLOR, posts)
+  Net.open_board(self.id, "Actions", Menu.DEFAULT_COLOR, posts)
   self.menus[#self.menus+1] = { id = Menu.ACTIONS }
 end
 
@@ -423,16 +426,16 @@ function Player:open_inventory()
 
   InventoryUtil.generate_item_posts(self.items, posts)
 
-  Net.open_board(self.id, "Inventory", Menu.COLOR, posts)
+  Net.open_board(self.id, "Inventory", Menu.DEFAULT_COLOR, posts)
   self.menus[#self.menus+1] = { id = Menu.INVENTORY }
 end
 
-function Player:open_crafting_menu(name, recipes)
+function Player:open_crafting_menu(name, recipes, color)
   local posts = {}
 
   CraftingUtil.generate_recipe_posts(recipes, self.items, posts)
 
-  Net.open_board(self.id, name, Menu.COLOR, posts)
+  Net.open_board(self.id, name, color, posts)
   self.menus[#self.menus+1] = { id = Menu.CRAFT, recipes = recipes }
 end
 
@@ -447,7 +450,7 @@ function Player:open_chest(tile_entity)
 
   InventoryUtil.generate_item_posts(tile_entity.data.items, posts)
 
-  Net.open_board(self.id, "Chest", Menu.COLOR, posts)
+  Net.open_board(self.id, "Chest", Menu.CHEST_COLOR, posts)
   self.menus[#self.menus+1] = { id = Menu.CHEST, posts = posts, tile_entity = tile_entity }
 end
 
@@ -456,7 +459,7 @@ function Player:open_chest_inventory_submenu(tile_entity)
 
   InventoryUtil.generate_item_posts(self.items, posts)
 
-  Net.open_board(self.id, "Inventory", Menu.COLOR, posts)
+  Net.open_board(self.id, "Inventory", Menu.DEFAULT_COLOR, posts)
   self.menus[#self.menus+1] = { id = Menu.CHEST_INVENTORY_SUBMENU, tile_entity = tile_entity, posts = posts }
 end
 
@@ -502,7 +505,7 @@ function Player:handle_post_selection(post_id)
     end
   elseif current_menu.id == Menu.INVENTORY then
     if post_id == "CRAFT" then
-      self:open_crafting_menu("Craft", CraftingRecipes.Inventory)
+      self:open_crafting_menu("Craft", CraftingRecipes.Inventory, Menu.DEFAULT_COLOR)
     else
       -- selecting an item
       for i, item in ipairs(self.items) do
