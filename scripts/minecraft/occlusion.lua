@@ -5,6 +5,7 @@ local Blocks = require("scripts/minecraft/data/blocks")
 local Occlusion = {}
 
 -- chebyshev distance
+local FALLING_SPAWN_RANGE = 1
 local SPAWN_RANGE = 5
 local DESPAWN_RANGE = 5
 
@@ -14,7 +15,7 @@ function Occlusion:new(player)
     last_int_x = 0,
     last_int_y = 0,
     last_int_z = 0,
-    bot_layers = {} -- [int_z] = pillar { int_x, int_y, int_z, bots = { id, block_id, z_offset }[] }
+    bot_layers = {}, -- [int_z] = pillar { int_x, int_y, int_z, bots = { id, block_id, z_offset }[] }
   }
 
   setmetatable(occlusion, self)
@@ -122,8 +123,14 @@ function Occlusion:update_around(int_x, int_y, int_z)
     self.bot_layers[int_z] = bot_layer
   end
 
-  for x = int_x - SPAWN_RANGE, int_x + SPAWN_RANGE, 1 do
-    for y = int_y - SPAWN_RANGE, int_y + SPAWN_RANGE, 1 do
+  local spawn_range = SPAWN_RANGE
+
+  if self.player.changing_z then
+    spawn_range = FALLING_SPAWN_RANGE
+  end
+
+  for x = int_x - spawn_range, int_x + spawn_range, 1 do
+    for y = int_y - spawn_range, int_y + spawn_range, 1 do
       local pillar
 
       for _, _pillar in ipairs(bot_layer) do

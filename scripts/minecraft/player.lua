@@ -37,6 +37,8 @@ function Player:new(player_id)
     int_x = 0,
     int_y = 0,
     int_z = 0,
+    spawned = false,
+    changing_z = false
   }
 
   setmetatable(player, self)
@@ -47,6 +49,17 @@ end
 
 function Player:tick()
   self:update_menu()
+
+  if self.spawned and not self.changing_z and self.instance.world:get_block(self.int_x, self.int_y, self.int_z - 2) == Blocks.AIR then
+    self:fall_towards(self.x, self.y)
+  end
+end
+
+function Player:handle_player_join()
+  self.spawned = true
+
+  local pos = Net.get_player_position(self.id)
+  self:handle_player_move(pos.x, pos.y, pos.z)
 end
 
 function Player:handle_player_avatar_change(details)
@@ -224,11 +237,8 @@ function Player:try_break_block(x, y, z)
   end
 
   -- try jumping down
-  local next_floor_id = world:get_block(x, y, z - 4)
-
-  if head_id == Blocks.AIR and feet_id == Blocks.AIR and floor_id == Blocks.AIR and next_floor_id ~= Blocks.AIR then
-    self:animate_jump_down(self.id, float_x, float_y, z - 2)
-    return
+  if head_id == Blocks.AIR and feet_id == Blocks.AIR and floor_id == Blocks.AIR then
+    self:fall_towards(float_x, float_y)
   end
 end
 
@@ -278,20 +288,77 @@ function Player:animate_jump_up(player_id, x, y, z)
       duration = total_time * 1 / 3
     }
   })
+
+  self.changing_z = true
+
+  Async.sleep(total_time).and_then(function()
+    self.changing_z = false
+  end)
+
+  return total_time
 end
 
 function Player:animate_jump_down(player_id, x, y, z)
-  local total_time = .2
+  local z_diff = math.abs(z - self.int_z)
+
+  local start_time = .2
+  local remaining_time = (z_diff) / 2 * .1
+
   Net.animate_player_properties(player_id, {
     {
       properties = {
         { property = "X", ease = "Out", value = x },
         { property = "Y", ease = "Out", value = y },
+      },
+      duration = start_time
+    },
+    {
+      properties = {
         { property = "Z", ease = "In", value = z }
       },
-      duration = total_time
+      duration = remaining_time
     }
   })
+
+  local total_time = start_time + remaining_time
+
+  self.changing_z = true
+
+  Async.sleep(total_time).and_then(function()
+    self.changing_z = false
+  end)
+
+  return total_time
+end
+
+function Player:fall_towards(x, y)
+  local int_x = math.floor(x)
+  local int_y = math.floor(y)
+
+  local land_z = 0
+  local world = self.instance.world
+
+  for test_z = self.int_z - 4, 0, -2 do
+    if world:get_block(int_x, int_y, test_z) ~= Blocks.AIR then
+      land_z = test_z + 2
+      break
+    end
+  end
+
+  local time = self:animate_jump_down(self.id, x, y, land_z)
+
+  Async.sleep(time).and_then(function()
+    if land_z == 0 then
+      -- return to spawn
+      local spawn = Net.get_spawn_position(self.instance.id)
+      Net.teleport_player(self.id, true, spawn.x, spawn.y, spawn.z)
+
+      self.changing_z = true
+      Async.sleep(1).and_then(function()
+        self.changing_z = false
+      end)
+    end
+  end)
 end
 
 function Player:try_interact(x, y, z)

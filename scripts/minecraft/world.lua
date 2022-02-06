@@ -207,6 +207,10 @@ function World:set_spawn_position(x, y)
   end
 
   Net.set_spawn_position(self.area_id, x + .5, y + .5, self.spawn_z)
+
+  for _, player in ipairs(self.players) do
+    Net.set_spawn_position(player.instance.id, x + .5, y + .5, self.spawn_z)
+  end
 end
 
 -- finds the tile entity or makes a new one

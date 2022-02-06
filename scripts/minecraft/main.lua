@@ -21,6 +21,8 @@ end
 function handle_player_join(player_id)
   local player = players[player_id]
 
+  player:handle_player_join()
+
   if player.instance then
     player.instance.world:handle_player_join(player)
   end
