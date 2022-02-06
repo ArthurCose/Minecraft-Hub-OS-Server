@@ -20,6 +20,7 @@ function World:new(area_id)
     height = 0,
     layers = 0,
     data = {
+      block_dictionary = Blocks,
       spawn_x = 0,
       spawn_y = 0,
       spawn_z = 0,
