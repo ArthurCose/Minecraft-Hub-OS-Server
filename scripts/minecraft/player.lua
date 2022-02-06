@@ -21,8 +21,6 @@ function Player:new(player_id)
     menus = {}, -- { id, (menu specific) }
     items = { -- { id, count }[]
     -- starting items
-      { id = "WATER_8", count = 1 },
-      { id = "WATER_3", count = 1 },
       { id = "OAK_SAPLING", count = 1 },
       { id = "COBBLESTONE", count = 8 },
       { id = "DIRT", count = 16 }
