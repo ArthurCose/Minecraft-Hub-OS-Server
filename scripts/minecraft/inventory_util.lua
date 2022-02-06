@@ -1,7 +1,7 @@
 -- inventory/items format = { id: string, count: int }
 
 local Tags = require("scripts/minecraft/data/tags")
-local includes = require("scripts/lib/includes")
+local includes = require("scripts/libs/includes")
 
 local InventoryUtil = {}
 

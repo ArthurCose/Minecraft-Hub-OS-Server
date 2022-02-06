@@ -1,6 +1,6 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local Liquids = require("scripts/minecraft/data/liquids")
-local append_table = require("scripts/lib/append_table")
+local append_table = require("scripts/libs/append_table")
 
 local NoCollision = {
   Blocks.AIR,

@@ -3,7 +3,7 @@ local TileEntities = require("scripts/minecraft/data/tile_entities")
 local NoCollision = require("scripts/minecraft/data/no_collision")
 local SyncedWorldInstance = require("scripts/minecraft/synced_world_instance")
 local BlockTicks = require("scripts/minecraft/block_ticks")
-local includes = require("scripts/lib/includes")
+local includes = require("scripts/libs/includes")
 
 
 local World = {

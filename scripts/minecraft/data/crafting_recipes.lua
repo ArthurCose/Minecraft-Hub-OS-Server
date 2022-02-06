@@ -1,4 +1,4 @@
-local append_table = require("scripts/lib/append_table")
+local append_table = require("scripts/libs/append_table")
 
 local CraftingRecipes = {
   Inventory = {

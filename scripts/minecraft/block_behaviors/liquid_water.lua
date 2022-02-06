@@ -1,7 +1,7 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local Liquids = require("scripts/minecraft/data/liquids")
 local place_if_air = require("scripts/minecraft/block_behaviors/helpers").place_if_air
-local includes = require("scripts/lib/includes")
+local includes = require("scripts/libs/includes")
 
 local next_stage_map = {
   [Blocks.WATER_FULL] = Blocks.WATER_7,

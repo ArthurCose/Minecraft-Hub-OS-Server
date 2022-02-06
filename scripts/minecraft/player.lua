@@ -9,7 +9,7 @@ local CraftingRecipes = require("scripts/minecraft/data/crafting_recipes")
 local ChestMenu = require("scripts/minecraft/menu/chest_menu")
 local InventoryUtil = require("scripts/minecraft/inventory_util")
 local PlayerActions = require("scripts/minecraft/player_actions")
-local includes = require("scripts/lib/includes")
+local includes = require("scripts/libs/includes")
 
 local Player = {}
 

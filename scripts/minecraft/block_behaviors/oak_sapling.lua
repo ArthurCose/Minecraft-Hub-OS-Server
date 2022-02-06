@@ -1,6 +1,6 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local place_if_air = require("scripts/minecraft/block_behaviors/helpers").place_if_air
-local includes = require("scripts/lib/includes")
+local includes = require("scripts/libs/includes")
 
 local dirt_plantable_blocks = {
   Blocks.DIRT,
