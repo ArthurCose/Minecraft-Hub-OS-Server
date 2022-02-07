@@ -54,7 +54,9 @@ function Player:tick()
 
   local world = self.instance.world
 
-  if world:get_block(self.int_x, self.int_y, self.int_z - 2) == Blocks.AIR then
+  local block_below_id = world:get_block(self.int_x, self.int_y, self.int_z - 2)
+
+  if includes(NoCollision, block_below_id) and not includes(Liquids.Full, block_below_id) then
     self:fall_towards(self.x, self.y)
   end
 
@@ -380,7 +382,9 @@ function Player:fall_towards(x, y)
   local world = self.instance.world
 
   for test_z = self.int_z - 4, 0, -2 do
-    if world:get_block(int_x, int_y, test_z) ~= Blocks.AIR then
+    local block_id = world:get_block(int_x, int_y, test_z)
+
+    if not includes(NoCollision, block_id) or includes(Liquids.Full, block_id) then
       land_z = test_z + 2
       break
     end

@@ -37,7 +37,11 @@ local Liquids = {
     Blocks.LAVA_1,
   },
   All = {},
-  Flowing = {}
+  Flowing = {},
+  Full = {
+    Blocks.LAVA_FULL,
+    Blocks.WATER_FULL
+  }
 }
 
 append_table(Liquids.All, Liquids.Water)
