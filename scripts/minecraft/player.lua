@@ -54,7 +54,7 @@ function Player:tick()
 
   local world = self.instance.world
 
-  local block_below_id = world:get_block(self.int_x, self.int_y, self.int_z - 2)
+  local block_below_id = world:get_block(self.int_x, self.int_y, self.int_z - world.layer_diff)
 
   if includes(NoCollision, block_below_id) and not includes(Liquids.Full, block_below_id) then
     self:fall_towards(self.x, self.y)
@@ -203,10 +203,10 @@ function Player:try_place_block(x, y, z)
   local world = self.instance.world
 
   -- place a block below
-  local floor_id = world:get_block(x, y, z - 2)
+  local floor_id = world:get_block(x, y, z - world.layer_diff)
 
   if floor_id == Blocks.AIR or includes(Liquids.Flowing, floor_id) then
-    return place_block(self, x, y, z - 2)
+    return place_block(self, x, y, z - world.layer_diff)
   end
 
   -- place a block at feet
@@ -217,10 +217,10 @@ function Player:try_place_block(x, y, z)
   end
 
   -- place a block at head
-  local head_id = world:get_block(x, y, z + 2)
+  local head_id = world:get_block(x, y, z + world.layer_diff)
 
   if head_id == Blocks.AIR or includes(Liquids.Flowing, head_id) then
-    return place_block(self, x, y, z + 2)
+    return place_block(self, x, y, z + world.layer_diff)
   end
 
   return false
@@ -258,10 +258,10 @@ function Player:try_break_block(x, y, z)
   local world = self.instance.world
 
   -- break the block at head
-  local head_id = world:get_block(x, y, z + 2)
+  local head_id = world:get_block(x, y, z + world.layer_diff)
 
   if head_id ~= Blocks.AIR then
-    return break_block(self, x, y, z + 2)
+    return break_block(self, x, y, z + world.layer_diff)
   end
 
   -- break the block at feet
@@ -272,11 +272,11 @@ function Player:try_break_block(x, y, z)
   end
 
   -- break the block below
-  local floor_id = world:get_block(x, y, z - 2)
+  local floor_id = world:get_block(x, y, z - world.layer_diff)
   local can_jump_through_floor = floor_id == Blocks.AIR or includes(Liquids.All, floor_id)
 
   if not can_jump_through_floor then
-    return break_block(self, x, y, z - 2)
+    return break_block(self, x, y, z - world.layer_diff)
   end
 
   -- try jumping down
@@ -294,11 +294,11 @@ function Player:try_jump_up(x, y, z)
 
   -- try jumping
   local feet_id = world:get_block(int_x, int_y, int_z)
-  local head_id = world:get_block(int_x, int_y, int_z + 2)
-  local ceiling_id = world:get_block(int_x, int_y, int_z + 4)
+  local head_id = world:get_block(int_x, int_y, int_z + world.layer_diff)
+  local ceiling_id = world:get_block(int_x, int_y, int_z + 2 * world.layer_diff)
 
   if (feet_id ~= Blocks.AIR and not includes(Liquids.All, feet_id)) and head_id == Blocks.AIR and ceiling_id == Blocks.AIR then
-    self:animate_jump_up(self.id, x, y, int_z + 2)
+    self:animate_jump_up(self.id, x, y, int_z + world.layer_diff)
   end
 end
 
@@ -381,11 +381,11 @@ function Player:fall_towards(x, y)
   local land_z = 0
   local world = self.instance.world
 
-  for test_z = self.int_z - 4, 0, -2 do
+  for test_z = self.int_z - 2 * world.layer_diff, 0, -world.layer_diff do
     local block_id = world:get_block(int_x, int_y, test_z)
 
     if not includes(NoCollision, block_id) or includes(Liquids.Full, block_id) then
-      land_z = test_z + 2
+      land_z = test_z + world.layer_diff
       break
     end
   end

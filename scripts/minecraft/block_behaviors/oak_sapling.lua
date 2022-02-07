@@ -9,7 +9,7 @@ local dirt_plantable_blocks = {
 }
 
 local function update(world, int_x, int_y, int_z)
-  local block_below_id = world:get_block(int_x, int_y, int_z - 2)
+  local block_below_id = world:get_block(int_x, int_y, int_z - world.layer_diff)
 
   if not includes(dirt_plantable_blocks, block_below_id) then
     -- kill it
