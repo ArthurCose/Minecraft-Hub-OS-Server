@@ -29,11 +29,6 @@ local function has_water_neighbor(world, int_x, int_y, int_z)
 end
 
 local function update(world, int_x, int_y, int_z, block_id)
-  if math.random(2) == 1 then
-    -- only update half the time to move slower than water
-    return
-  end
-
   local block_below_id = world:get_block(int_x, int_y, int_z - world.layer_diff)
 
   if includes(Liquids.Water, block_below_id) then
@@ -48,6 +43,11 @@ local function update(world, int_x, int_y, int_z, block_id)
     else
       world:set_block(int_x, int_y, int_z, Blocks.COBBLESTONE)
     end
+    return
+  end
+
+  if math.random(2) == 1 then
+    -- only update half the time to move slower than water
     return
   end
 
