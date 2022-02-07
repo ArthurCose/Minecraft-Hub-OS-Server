@@ -8,6 +8,7 @@ local next_stage_map = {
   [Blocks.LAVA_4] = Blocks.LAVA_3,
   [Blocks.LAVA_3] = Blocks.LAVA_2,
   [Blocks.LAVA_2] = Blocks.LAVA_1,
+  [Blocks.LAVA_1] = Blocks.AIR,
 }
 
 local higher_stages_map = {

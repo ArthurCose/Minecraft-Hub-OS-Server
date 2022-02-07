@@ -12,6 +12,7 @@ local next_stage_map = {
   [Blocks.WATER_4] = Blocks.WATER_3,
   [Blocks.WATER_3] = Blocks.WATER_2,
   [Blocks.WATER_2] = Blocks.WATER_1,
+  [Blocks.WATER_1] = Blocks.AIR,
 }
 
 local higher_stages_map = {
