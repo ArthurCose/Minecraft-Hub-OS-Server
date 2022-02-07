@@ -5,6 +5,7 @@ local Tags = {
   ["#saplings"] = { "OAK_SAPLING", "BIRCH_SAPLING", "SPRUCE_SAPLING", "JUNGLE_SAPLING", "DARK_OAK_SAPLING", "ACACIA_SAPLING" },
   ["#coal"] = { "CHARCOAL", "COAL" },
   ["#signs"] = { "OAK_SIGN" },
+  ["#dirt"] = {	"DIRT", "GRASS_BLOCK", "PODZOL", "COARSE_DIRT", "MYCELIUM", "ROOTED_DIRT", "MOSS_BLOCK" }
 }
 
 return Tags

@@ -1,17 +1,16 @@
 local Blocks = require("scripts/minecraft/data/blocks")
-local place_if_air = require("scripts/minecraft/block_behaviors/helpers").place_if_air
+local Tags = require("scripts/minecraft/data/tags")
+local Helpers = require("scripts/minecraft/block_behaviors/helpers")
 local includes = require("scripts/libs/includes")
 
-local dirt_plantable_blocks = {
-  Blocks.DIRT,
-  Blocks.GRASS_BLOCK,
-  Blocks.PODZOL,
-}
+local place_if_air = Helpers.place_if_air
+
+local dirt_block_ids = Helpers.get_block_ids(Tags["#dirt"])
 
 local function update(world, int_x, int_y, int_z)
   local block_below_id = world:get_block(int_x, int_y, int_z - world.layer_diff)
 
-  if not includes(dirt_plantable_blocks, block_below_id) then
+  if not includes(dirt_block_ids, block_below_id) then
     -- kill it
     world:set_block(int_x, int_y, int_z, Blocks.AIR)
     return
