@@ -33,7 +33,7 @@ local function update(world, int_x, int_y, int_z, block_id)
 
   if includes(Liquids.Water, block_below_id) then
     -- convert water below to stone
-    world:set_block(int_x, int_y, int_z, Blocks.STONE)
+    world:set_block(int_x, int_y, int_z - world.layer_diff, Blocks.STONE)
     return
   end
 
