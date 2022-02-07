@@ -2,7 +2,7 @@ local InventoryUtil = require("scripts/minecraft/inventory_util")
 local CraftingUtil = {}
 
 function CraftingUtil.generate_recipe_posts(recipes, items, posts)
-  for _, recipe in ipairs(recipes) do
+  for recipe_index, recipe in ipairs(recipes) do
     local matches = true
 
     for _, required_item in ipairs(recipe.required) do
@@ -13,21 +13,13 @@ function CraftingUtil.generate_recipe_posts(recipes, items, posts)
     end
 
     if matches then
-      posts[#posts+1] = { id = recipe.result.id, read = true, title = recipe.result.id, author = recipe.result.count }
+      posts[#posts+1] = { id = recipe_index, read = true, title = recipe.result.id, author = recipe.result.count }
     end
   end
 end
 
 function CraftingUtil.craft(recipes, items, post_id)
-  local recipe
-
-  -- find the recipe
-  for _, r in ipairs(recipes) do
-    if r.result.id == post_id then
-      recipe = r
-      break
-    end
-  end
+  local recipe = recipes[tonumber(post_id)]
 
   -- take required items
   for _, item in ipairs(recipe.required) do
