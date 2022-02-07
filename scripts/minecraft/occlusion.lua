@@ -190,7 +190,7 @@ function Occlusion:handle_player_move(player)
 
   if self.last_int_z ~= player.int_z then
     -- changed layer, delete all bots
-    self:clear_layer(self.last_int_z)
+    self:clear_all_layers()
   end
 
   self.last_int_x = player.int_x
