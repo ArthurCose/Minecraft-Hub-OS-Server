@@ -46,10 +46,23 @@ function Saves.load(world, path)
     world.data.block_dictionary = Blocks
 
     -- translate using the block dictionary
-    for _, layer in ipairs(world.data.blocks) do
-      for _, row in ipairs(layer) do
+    for layerIndex, layer in ipairs(world.data.blocks) do
+      for rowIndex, row in ipairs(layer) do
         for col = 1, #layer do
-          row[col] = translator[row[col]]
+          local new_id = translator[row[col]]
+
+          if new_id == nil then
+            local x = col - 1
+            local y = rowIndex - 1
+            local z = layerIndex * world.layer_diff
+
+            print("Failed to translate " .. row[col] .. " at (" .. x .. ", " .. y .. ", " .. z.. ")")
+
+            -- use an air block
+            row[col] = Blocks.AIR
+          else
+            row[col] = new_id
+          end
         end
       end
     end
