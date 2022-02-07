@@ -73,7 +73,7 @@ local function create_pillar(self, int_x, int_y, int_z)
   local world = self.player.instance.world
   local area_id = self.player.instance.id
 
-  for z_offset = 0, 4, world.layer_diff do
+  for z_offset = 0, world.layer_diff, world.layer_diff do
     local block_id = world:get_block(int_x, int_y, int_z + z_offset)
 
     local bot_id = nil
