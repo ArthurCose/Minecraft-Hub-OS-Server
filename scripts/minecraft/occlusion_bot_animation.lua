@@ -21,7 +21,7 @@ end
 
 local function generate()
   local cols = 8
-  local rows = 11
+  local rows = 13
 
   local animation = "animation state=\"IDLE_U\"\nempty\n\nanimation state=\"IDLE_D\"\nempty\n\n"
 
@@ -30,7 +30,6 @@ local function generate()
     for col = 0, cols - 1 do
       animation = animation .. generate_frame(id, 0, col, row)
       animation = animation .. generate_frame(id, 2, col, row)
-      animation = animation .. generate_frame(id, 4, col, row)
       id = id + 1
     end
   end
