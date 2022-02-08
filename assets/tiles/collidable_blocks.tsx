@@ -83,6 +83,9 @@
   </objectgroup>
  </tile>
  <tile id="16">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
@@ -283,27 +286,42 @@
   </objectgroup>
  </tile>
  <tile id="56">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
    <object id="2" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
  </tile>
  <tile id="57">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
  </tile>
  <tile id="58">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
  </tile>
  <tile id="59">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
  </tile>
  <tile id="61">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
@@ -366,6 +384,9 @@
   </objectgroup>
  </tile>
  <tile id="72">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-28" y="-22" width="86" height="77"/>
   </objectgroup>
@@ -391,6 +412,9 @@
   </objectgroup>
  </tile>
  <tile id="79">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
@@ -421,11 +445,17 @@
   </objectgroup>
  </tile>
  <tile id="85">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
  </tile>
  <tile id="86">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
