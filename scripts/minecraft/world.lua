@@ -1,8 +1,8 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local TileEntities = require("scripts/minecraft/data/tile_entities")
 local NoCollision = require("scripts/minecraft/data/no_collision")
+local BlockBehaviors = require("scripts/minecraft/block_behaviors/block_behaviors")
 local SyncedWorldInstance = require("scripts/minecraft/synced_world_instance")
-local BlockTicks = require("scripts/minecraft/block_ticks")
 local includes = require("scripts/libs/includes")
 
 
@@ -306,7 +306,7 @@ function World:tick()
 
     local block_id = row[x]
 
-    local update = BlockTicks[block_id]
+    local update = BlockBehaviors[block_id]
 
     if update then
       update(self, x - 1, y - 1, layerIndex * self.layer_diff, block_id)
