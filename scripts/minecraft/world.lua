@@ -217,10 +217,13 @@ function World:set_spawn_position(x, y)
   self.data.spawn_x = x
   self.data.spawn_y = y
 
-  for z = World.player_layer_offset * World.layer_diff, self.layers * World.layer_diff, World.layer_diff do
-    local id = self:get_block(x, y, z)
+  for z = World.layer_diff, self.layers * World.layer_diff, World.layer_diff do
+    local ground_block_id = self:get_block(x, y, z - World.layer_diff)
+    local feet_block_id = self:get_block(x, y, z)
+    local head_block_id = self:get_block(x, y, z + World.layer_diff)
 
-    if id == Blocks.AIR then
+    -- must have a solid floor, and not collide with body
+    if not includes(NoCollision, ground_block_id) and includes(NoCollision, feet_block_id) and includes(NoCollision, head_block_id) then
       self.data.spawn_z = z
       break
     end
