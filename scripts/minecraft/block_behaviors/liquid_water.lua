@@ -20,9 +20,9 @@ local higher_stages_map = {
   [Blocks.WATER_6] = { Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
   [Blocks.WATER_5] = { Blocks.WATER_6, Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
   [Blocks.WATER_4] = { Blocks.WATER_5, Blocks.WATER_6, Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
-  [Blocks.WATER_3] = { Blocks.Water_4, Blocks.WATER_5, Blocks.WATER_6, Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
-  [Blocks.WATER_2] = { Blocks.Water_3, Blocks.Water_4, Blocks.WATER_5, Blocks.WATER_6, Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
-  [Blocks.WATER_1] = { Blocks.Water_2, Blocks.Water_3, Blocks.Water_4, Blocks.WATER_5, Blocks.WATER_6, Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
+  [Blocks.WATER_3] = { Blocks.WATER_4, Blocks.WATER_5, Blocks.WATER_6, Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
+  [Blocks.WATER_2] = { Blocks.WATER_3, Blocks.WATER_4, Blocks.WATER_5, Blocks.WATER_6, Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
+  [Blocks.WATER_1] = { Blocks.WATER_2, Blocks.WATER_3, Blocks.WATER_4, Blocks.WATER_5, Blocks.WATER_6, Blocks.WATER_7, Blocks.WATER_8, Blocks.WATER_FULL },
 }
 
 local function update(world, int_x, int_y, int_z, block_id)
