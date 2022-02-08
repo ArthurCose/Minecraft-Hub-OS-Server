@@ -10,6 +10,7 @@ local CraftingRecipes = require("scripts/minecraft/data/crafting_recipes")
 local ChestMenu = require("scripts/minecraft/menu/chest_menu")
 local InventoryUtil = require("scripts/minecraft/inventory_util")
 local PlayerActions = require("scripts/minecraft/player_actions")
+local Direction = require("scripts/libs/direction")
 local includes = require("scripts/libs/includes")
 
 local Player = {}
@@ -105,7 +106,7 @@ function Player:handle_actor_interaction(other_id, button)
     return
   end
 
-  local pos = Net.get_bot_position(other_id)
+  local pos = Net.get_player_position(self.id)
 
   self:handle_tile_interaction(pos.x, pos.y, pos.z, button)
 end
@@ -115,8 +116,11 @@ function Player:handle_tile_interaction(x, y, z, button)
     return
   end
 
-  x = math.floor(x) + .5
-  y = math.floor(y) + .5
+  local direction = Net.get_player_direction(self.id)
+  local pos = Direction.get_point_ahead({ x = x, y = y, z = z }, direction, .25)
+
+  x = math.floor(pos.x) + .5
+  y = math.floor(pos.y) + .5
 
   if button == 1 then
     if #self.menus == 0 then
