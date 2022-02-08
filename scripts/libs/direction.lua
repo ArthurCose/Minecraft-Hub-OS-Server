@@ -88,28 +88,28 @@ local deg_45 = math.sin(math.pi / 4.0)
 function Direction.get_point_ahead(point, direction, distance)
   local new_point = { x = point.x, y = point.y, z = point.z }
 
-  if direction == Direction.left then
+  if direction == Direction.UP_LEFT then
      new_point.x = point.x - distance
      new_point.y = point.y
-  elseif direction == Direction.right then
-    new_point.x = point.x + distance
-    new_point.y = point.y
-  elseif direction == Direction.up then
+    elseif direction == Direction.DOWN_RIGHT then
+      new_point.x = point.x + distance
+      new_point.y = point.y
+  elseif direction == Direction.UP_RIGHT then
     new_point.x = point.x
     new_point.y = point.y - distance
-  elseif direction == Direction.down then
+  elseif direction == Direction.DOWN_LEFT then
     new_point.x = point.x
     new_point.y = point.y + distance
-  elseif direction == Direction.up_left then
-    new_point.x = point.x - deg_45 * distance
-    new_point.y = point.y - deg_45 * distance
-  elseif direction == Direction.up_right then
+  elseif direction == Direction.RIGHT then
     new_point.x = point.x + deg_45 * distance
     new_point.y = point.y - deg_45 * distance
-  elseif direction == Direction.down_left then
+  elseif direction == Direction.LEFT then
     new_point.x = point.x - deg_45 * distance
     new_point.y = point.y + deg_45 * distance
-  elseif direction == Direction.down_right then
+  elseif direction == Direction.UP then
+    new_point.x = point.x - deg_45 * distance
+    new_point.y = point.y - deg_45 * distance
+  elseif direction == Direction.DOWN then
     new_point.x = point.x + deg_45 * distance
     new_point.y = point.y + deg_45 * distance
   end
