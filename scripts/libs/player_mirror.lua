@@ -1,15 +1,6 @@
 local PlayerMirror = {}
 
-local PIXELS_PER_TILE = 14 -- SPECIFIC TO THIS SERVER, USE TILE HEIGHT TO RESOLVE
 local TICKS_PER_SECOND = 20
-
-local WALK_SPEED = 70 / PIXELS_PER_TILE / TICKS_PER_SECOND
-local RUN_SPEED = 140 / PIXELS_PER_TILE / TICKS_PER_SECOND
-local REDUCED_WALK_SPEED = 3 / PIXELS_PER_TILE
-local RUN_DIST = RUN_SPEED * 2
-local WALK_DIST = WALK_SPEED * 3
-local CATCH_UP_DIST = REDUCED_WALK_SPEED
-local TELEPORT_DIST = 3
 
 local function world_to_screen(x, y)
   return x - y, (x + y) * .5
@@ -50,7 +41,21 @@ function PlayerMirror:new(area_id, player_id, x, y, z, warp_in)
   setmetatable(player_mirror, self)
   self.__index = self
 
+  player_mirror:recalculate_distances()
+
   return player_mirror
+end
+
+function PlayerMirror:recalculate_distances()
+  local PIXELS_PER_TILE = Net.get_tile_height(Net.get_bot_area(self.bot_id))
+
+  self.walk_speed = 70 / PIXELS_PER_TILE / TICKS_PER_SECOND
+  self.run_speed = 140 / PIXELS_PER_TILE / TICKS_PER_SECOND
+  self.reduced_walk_speed = 3 / PIXELS_PER_TILE
+  self.run_dist = self.run_speed * 2
+  self.walk_dist = self.walk_speed * 3
+  self.catch_up_dist = self.reduced_walk_speed
+  self.teleport_dist = 3
 end
 
 function PlayerMirror:tick()
@@ -59,21 +64,21 @@ function PlayerMirror:tick()
 
   local chebyshev_dist = math.max(math.abs(screen_x_diff), math.abs(screen_y_diff))
 
-  if chebyshev_dist > TELEPORT_DIST then
+  if chebyshev_dist > self.teleport_dist then
     self.screen_x = self.target_screen_x
     self.screen_y = self.target_screen_y
-    if chebyshev_dist > TELEPORT_DIST then
+    if chebyshev_dist > self.teleport_dist then
       self.screen_z = self.target_z
     end
-  elseif chebyshev_dist >= CATCH_UP_DIST then
+  elseif chebyshev_dist >= self.catch_up_dist then
     local speed
 
-    if chebyshev_dist >= RUN_DIST then
-      speed = RUN_SPEED
-    elseif chebyshev_dist >= WALK_DIST then
-      speed = WALK_SPEED
+    if chebyshev_dist >= self.run_dist then
+      speed = self.run_speed
+    elseif chebyshev_dist >= self.walk_dist then
+      speed = self.walk_speed
     else
-      speed = REDUCED_WALK_SPEED
+      speed = self.reduced_walk_speed
     end
 
     self.screen_x = self.screen_x + screen_x_diff / chebyshev_dist * speed
