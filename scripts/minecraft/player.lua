@@ -157,7 +157,7 @@ end
 
 function Player:get_interaction_position(start_x, start_y, start_z)
   local direction = Net.get_player_direction(self.id)
-  local pos = Direction.get_point_ahead({ x = start_x, y = start_y, z = start_z }, direction, .25)
+  local pos = Direction.get_point_ahead({ x = start_x, y = start_y, z = start_z }, direction, .5)
 
   return pos
 end
