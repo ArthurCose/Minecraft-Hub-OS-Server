@@ -383,7 +383,8 @@ function Player:fall_towards(x, y)
   local int_x = math.floor(x)
   local int_y = math.floor(y)
 
-  local land_z = 0
+  local DEATH_ZONE = 0 -- todo: set to -8 when putting the player below 0 stops crashing the game
+  local land_z = DEATH_ZONE
   local world = self.instance.world
 
   for test_z = self.int_z - 2 * world.layer_diff, 0, -world.layer_diff do
@@ -398,7 +399,7 @@ function Player:fall_towards(x, y)
   local time = self:animate_jump_down(self.id, x, y, land_z)
 
   Async.sleep(time).and_then(function()
-    if land_z == 0 then
+    if land_z == DEATH_ZONE then
       self:respawn()
     end
   end)
