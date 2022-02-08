@@ -143,6 +143,16 @@ function World:refresh()
   self:set_spawn_position(self.data.spawn_x, self.data.spawn_y)
 end
 
+function World:in_bounds(x, y, z)
+  local layerIndex = math.floor(z / World.layer_diff) + 1 - World.player_layer_offset
+  local layer = self.data.blocks[layerIndex]
+  if layer == nil then return false end
+  local row = layer[y + 1]
+  if row == nil then return false end
+  if row[x + 1] == nil then return false end
+  return true
+end
+
 function World:get_block(x, y, z)
   z = math.floor(z / World.layer_diff) - World.player_layer_offset
   local layer = self.data.blocks[z + 1]

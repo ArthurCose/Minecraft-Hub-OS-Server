@@ -27,9 +27,13 @@ function SelectionPreview:new()
   return selection_preview
 end
 
-local function resolve_interaction_type(player)
-  if player.action == PlayerActions.ITEM and player.selected_item and Blocks[player.selected_item.id] then
-    return InteractionType.PLACE
+local function resolve_interaction_type(player, world, int_x, int_y, int_z)
+  if player.action == PlayerActions.ITEM and player.selected_item then
+    local suffix = player:get_block_direction_suffix(int_x, int_y, int_z)
+
+    if world:in_bounds(int_x, int_y, int_z) and Blocks[player.selected_item.id] or Blocks[player.selected_item.id..suffix] then
+      return InteractionType.PLACE
+    end
   elseif player.action == PlayerActions.PUNCH then
     return InteractionType.BREAK
   end
@@ -37,15 +41,15 @@ local function resolve_interaction_type(player)
 end
 
 function SelectionPreview:update(world, player)
-  local interaction_type = resolve_interaction_type(player)
+  local interaction_pos = player:get_interaction_position(player.x, player.y, player.z)
+  local int_x = math.floor(interaction_pos.x)
+  local int_y = math.floor(interaction_pos.y)
+  local int_z = math.floor(interaction_pos.z)
+
+  local interaction_type = resolve_interaction_type(player, world, int_x, int_y, int_z)
   local new_x, new_y, new_z, new_animation
 
   if interaction_type == InteractionType.PLACE then
-    local interaction_pos = player:get_interaction_position(player.x, player.y, player.z)
-    local int_x = math.floor(interaction_pos.x)
-    local int_y = math.floor(interaction_pos.y)
-    local int_z = math.floor(interaction_pos.z)
-
     for z_offset = -world.layer_diff, world.layer_diff, world.layer_diff do
       local block_id = world:get_block(int_x, int_y, int_z + z_offset)
 
@@ -58,11 +62,6 @@ function SelectionPreview:update(world, player)
       end
     end
   elseif interaction_type == InteractionType.BREAK then
-    local interaction_pos = player:get_interaction_position(player.x, player.y, player.z)
-    local int_x = math.floor(interaction_pos.x)
-    local int_y = math.floor(interaction_pos.y)
-    local int_z = math.floor(interaction_pos.z)
-
     for z_offset = world.layer_diff, -world.layer_diff, -world.layer_diff do
       local block_id = world:get_block(int_x, int_y, int_z + z_offset)
 
