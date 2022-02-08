@@ -4,7 +4,7 @@ local frame_width = 29
 local frame_height = 31
 local originx = math.floor(frame_width / 2) + 1
 local originy = 22
-local layer_diff = 7
+local layer_diff = 7.5 -- (7 + .5) since we shift the bots a pixel down for layering
 
 local function get_state(block_id, z_offset)
   return block_id .. "_" .. z_offset
