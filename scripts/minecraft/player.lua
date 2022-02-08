@@ -36,6 +36,7 @@ function Player:new(player_id)
     int_z = 0,
     spawned = false,
     changing_z = false,
+    floating_time = 0,
     textbox_promise_resolvers = {}
   }
 
@@ -57,7 +58,13 @@ function Player:tick()
   local block_below_id = world:get_block(self.int_x, self.int_y, self.int_z - world.layer_diff)
 
   if includes(NoCollision, block_below_id) and not includes(Liquids.Full, block_below_id) then
-    self:fall_towards(self.x, self.y)
+    if self.floating_time >= 3 then
+      -- fall if the player appears stuck in the air
+      self:fall_towards(self.x, self.y)
+      self.floating_time = 0
+    else
+      self.floating_time = self.floating_time + 1
+    end
   end
 
   if includes(Liquids.Lava, world:get_block(self.int_x, self.int_y, self.int_z)) then
