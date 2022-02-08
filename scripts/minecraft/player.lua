@@ -271,14 +271,14 @@ function Player:try_break_block(x, y, z)
   -- break the block at head
   local head_id = world:get_block(x, y, z + world.layer_diff)
 
-  if head_id ~= Blocks.AIR then
+  if head_id ~= Blocks.AIR and not includes(Liquids.All, head_id) then
     return break_block(self, x, y, z + world.layer_diff)
   end
 
   -- break the block at feet
   local feet_id = world:get_block(x, y, z)
 
-  if feet_id ~= Blocks.AIR then
+  if feet_id ~= Blocks.AIR and not includes(Liquids.All, feet_id) then
     return break_block(self, x, y, z)
   end
 
