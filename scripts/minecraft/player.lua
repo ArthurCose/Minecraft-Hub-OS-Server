@@ -116,8 +116,7 @@ function Player:handle_tile_interaction(x, y, z, button)
     return
   end
 
-  local direction = Net.get_player_direction(self.id)
-  local pos = Direction.get_point_ahead({ x = x, y = y, z = z }, direction, .25)
+  local pos = self:get_interaction_position(x, y, z)
 
   x = math.floor(pos.x) + .5
   y = math.floor(pos.y) + .5
@@ -156,14 +155,21 @@ local function consume_item(player)
   end
 end
 
-function get_block_direction_suffix(player, int_x, int_y)
-  if player.int_x > int_x then
+function Player:get_interaction_position(start_x, start_y, start_z)
+  local direction = Net.get_player_direction(self.id)
+  local pos = Direction.get_point_ahead({ x = start_x, y = start_y, z = start_z }, direction, .25)
+
+  return pos
+end
+
+function Player:get_block_direction_suffix(int_x, int_y)
+  if self.int_x > int_x then
     return "_E"
-  elseif player.int_y > int_y then
+  elseif self.int_y > int_y then
     return "_N"
-  elseif player.int_x < int_x then
+  elseif self.int_x < int_x then
     return "_W"
-  elseif player.int_y < int_y then
+  elseif self.int_y < int_y then
     return "_S"
   end
 
@@ -172,7 +178,7 @@ function get_block_direction_suffix(player, int_x, int_y)
 end
 
 local function place_block(player, x, y, z)
-  local direction_suffix = get_block_direction_suffix(player, x, y)
+  local direction_suffix = player:get_block_direction_suffix(x, y)
   local block_id = Blocks[player.selected_item.id .. direction_suffix] or Blocks[player.selected_item.id]
 
   local world = player.instance.world
@@ -203,7 +209,7 @@ function Player:try_place_block(x, y, z)
   y = math.floor(y)
   z = math.floor(z)
 
-  local direction_suffix = get_block_direction_suffix(self, x, y)
+  local direction_suffix = self:get_block_direction_suffix(x, y)
   local block = Blocks[self.selected_item.id .. direction_suffix] or Blocks[self.selected_item.id]
 
   if not block then
@@ -213,25 +219,13 @@ function Player:try_place_block(x, y, z)
 
   local world = self.instance.world
 
-  -- place a block below
-  local floor_id = world:get_block(x, y, z - world.layer_diff)
+  -- test at the ground, feet, and head
+  for z_offset = - world.layer_diff, world.layer_diff, world.layer_diff do
+    local block_id = world:get_block(x, y, z + z_offset)
 
-  if floor_id == Blocks.AIR or includes(Liquids.Flowing, floor_id) then
-    return place_block(self, x, y, z - world.layer_diff)
-  end
-
-  -- place a block at feet
-  local feet_id = world:get_block(x, y, z)
-
-  if feet_id == Blocks.AIR or includes(Liquids.Flowing, feet_id) then
-    return place_block(self, x, y, z)
-  end
-
-  -- place a block at head
-  local head_id = world:get_block(x, y, z + world.layer_diff)
-
-  if head_id == Blocks.AIR or includes(Liquids.Flowing, head_id) then
-    return place_block(self, x, y, z + world.layer_diff)
+    if block_id == Blocks.AIR or includes(Liquids.Flowing, block_id) then
+      return place_block(self, x, y, z + z_offset)
+    end
   end
 
   return false

@@ -1,4 +1,5 @@
 local Occlusion = require("scripts/minecraft/occlusion")
+local SelectionPreview = require("scripts/minecraft/selection_preview")
 
 local SyncedWorldInstance = {}
 
@@ -8,7 +9,8 @@ function SyncedWorldInstance:new(world, player, instance_id)
     world = world,
     player = player,
     player_mirrors = {}, -- { bot_id, player, avatar, x, y, z }
-    occlusion = Occlusion:new(player)
+    occlusion = Occlusion:new(player),
+    selection_preview = SelectionPreview:new(),
   }
 
   Net.clone_area(world.area_id, instance_id)
@@ -20,6 +22,7 @@ function SyncedWorldInstance:new(world, player, instance_id)
 end
 
 function SyncedWorldInstance:tick()
+  self.selection_preview:update(self.world, self.player)
   self.occlusion:update_around(self.player.int_x, self.player.int_y, self.player.int_z)
 
   for _, mirror in ipairs(self.player_mirrors) do
