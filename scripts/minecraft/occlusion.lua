@@ -56,8 +56,8 @@ local function create_bot(block_id, area_id, z_offset, int_x, int_y, int_z)
     animation = BotAnimation.get_state(block_id, z_offset),
     area_id = area_id,
     warp_in = false,
-    x = int_x + .5 + .02 * z_offset,
-    y = int_y + .5 + .02 * z_offset,
+    x = int_x + .5 + .02 * z_offset + (2/14),
+    y = int_y + .5 + .02 * z_offset + (2/14),
     z = int_z
   })
 end

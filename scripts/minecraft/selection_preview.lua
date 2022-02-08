@@ -110,8 +110,8 @@ function SelectionPreview:update(world, player)
       texture_path = TEXTURE_PATH,
       animation_path = ANIMATION_PATH,
       animation = new_animation,
-      x = new_x + .54 + .02 * z_offset,
-      y = new_y + .54 + .02 * z_offset,
+      x = new_x + .5 + .02 * z_offset + (3/14),
+      y = new_y + .5 + .02 * z_offset + (3/14),
       z = player.int_z,
       warp_in = false,
     })
