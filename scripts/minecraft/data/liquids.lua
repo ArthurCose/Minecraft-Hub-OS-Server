@@ -1,5 +1,6 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local append_table = require("scripts/libs/append_table")
+local includes = require("scripts/libs/includes")
 
 local Liquids = {
   Water = {
@@ -41,7 +42,8 @@ local Liquids = {
   Full = {
     Blocks.LAVA_FULL,
     Blocks.WATER_FULL
-  }
+  },
+  NonFull = {}
 }
 
 append_table(Liquids.All, Liquids.Water)
@@ -49,5 +51,11 @@ append_table(Liquids.All, Liquids.Lava)
 
 append_table(Liquids.Flowing, Liquids.FlowingWater)
 append_table(Liquids.Flowing, Liquids.FlowingLava)
+
+for _, block_id in ipairs(Liquids.All) do
+  if not includes(Liquids.Full, block_id) then
+    Liquids.NonFull[#Liquids.NonFull+1] = block_id
+  end
+end
 
 return Liquids

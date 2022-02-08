@@ -304,7 +304,7 @@ function Player:try_jump_up(x, y, z)
   local head_id = world:get_block(int_x, int_y, int_z + world.layer_diff)
   local ceiling_id = world:get_block(int_x, int_y, int_z + 2 * world.layer_diff)
 
-  if (feet_id ~= Blocks.AIR and not includes(Liquids.All, feet_id)) and head_id == Blocks.AIR and ceiling_id == Blocks.AIR then
+  if (feet_id ~= Blocks.AIR and not includes(Liquids.NonFull, feet_id)) and includes(NoCollision, head_id) and includes(NoCollision, ceiling_id) then
     self:animate_jump_up(self.id, x, y, int_z + world.layer_diff)
   end
 end
