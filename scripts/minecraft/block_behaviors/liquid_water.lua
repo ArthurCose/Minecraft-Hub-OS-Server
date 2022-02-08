@@ -3,15 +3,28 @@ local Liquids = require("scripts/minecraft/data/liquids")
 local place_if_air = require("scripts/minecraft/block_behaviors/helpers").place_if_air
 local includes = require("scripts/libs/includes")
 
+-- local next_stage_map = {
+--   [Blocks.WATER_FULL] = Blocks.WATER_7,
+--   [Blocks.WATER_8] = Blocks.WATER_7,
+--   [Blocks.WATER_7] = Blocks.WATER_6,
+--   [Blocks.WATER_6] = Blocks.WATER_5,
+--   [Blocks.WATER_5] = Blocks.WATER_4,
+--   [Blocks.WATER_4] = Blocks.WATER_3,
+--   [Blocks.WATER_3] = Blocks.WATER_2,
+--   [Blocks.WATER_2] = Blocks.WATER_1,
+--   [Blocks.WATER_1] = Blocks.AIR,
+-- }
+
+-- reduce lag by reducing water spread/levels
 local next_stage_map = {
   [Blocks.WATER_FULL] = Blocks.WATER_7,
-  [Blocks.WATER_8] = Blocks.WATER_7,
+  [Blocks.WATER_8] = Blocks.WATER_6,
   [Blocks.WATER_7] = Blocks.WATER_6,
   [Blocks.WATER_6] = Blocks.WATER_5,
-  [Blocks.WATER_5] = Blocks.WATER_4,
+  [Blocks.WATER_5] = Blocks.WATER_3,
   [Blocks.WATER_4] = Blocks.WATER_3,
   [Blocks.WATER_3] = Blocks.WATER_2,
-  [Blocks.WATER_2] = Blocks.WATER_1,
+  [Blocks.WATER_2] = Blocks.AIR,
   [Blocks.WATER_1] = Blocks.AIR,
 }
 
