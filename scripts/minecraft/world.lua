@@ -1,6 +1,7 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local TileEntities = require("scripts/minecraft/data/tile_entities")
 local NoCollision = require("scripts/minecraft/data/no_collision")
+local Climbable = require("scripts/minecraft/data/climbable")
 local BlockBehaviors = require("scripts/minecraft/block_behaviors/block_behaviors")
 local SyncedWorldInstance = require("scripts/minecraft/synced_world_instance")
 local includes = require("scripts/libs/includes")
@@ -79,7 +80,7 @@ local function update_tile(world, x, y, z)
 
   local ground_block_id = world:get_block(x, y, feet_block_z - World.layer_diff)
 
-  local can_walk = not includes(NoCollision, ground_block_id) or ground_block_id == Blocks.WATER_FULL
+  local can_walk = not includes(NoCollision, ground_block_id) or includes(Climbable, ground_block_id)
 
   if can_walk then
     -- we can walk through air if there's ground

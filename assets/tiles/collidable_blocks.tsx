@@ -186,21 +186,33 @@
   </objectgroup>
  </tile>
  <tile id="36">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
  </tile>
  <tile id="37">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
  </tile>
  <tile id="38">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>
  </tile>
  <tile id="39">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
   <objectgroup draworder="index" id="2">
    <object id="1" x="-35" y="-30" width="86" height="77"/>
   </objectgroup>

@@ -31,6 +31,10 @@ local Blocks = {
   DARK_OAK_LEAVES = 33,
   ACACIA_LOG = 34,
   ACACIA_LEAVES = 35,
+  LADDER_E = 36,
+  LADDER_N = 37,
+  LADDER_W = 38,
+  LADDER_S = 39,
 
   COAL_ORE = 40,
   COPPER_ORE = 41,

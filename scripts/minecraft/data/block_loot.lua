@@ -33,6 +33,10 @@ local BlockLoot = {
   [Blocks.DARK_OAK_LEAVES] = { nil, nil, nil, nil, nil, "DARK_OAK_SAPLING" },
   [Blocks.ACACIA_LOG] = { "ACACIA_LOG" },
   [Blocks.ACACIA_LEAVES] = { nil, nil, nil, nil, nil, "ACACIA_SAPLING" },
+  [Blocks.LADDER_E] = { "LADDER" },
+  [Blocks.LADDER_W] = { "LADDER" },
+  [Blocks.LADDER_N] = { "LADDER" },
+  [Blocks.LADDER_S] = { "LADDER" },
 
   [Blocks.COAL_ORE] = { "COAL" },
   [Blocks.COPPER_ORE] = { "RAW_COPPER" },

@@ -50,14 +50,17 @@ function Occlusion:clear_all_layers()
 end
 
 local function create_bot(block_id, area_id, z_offset, int_x, int_y, int_z)
+  local originy_offset = BotAnimation.get_originy_offset(block_id)
+  local sorting_offset = .5 + .02 * z_offset + (originy_offset + 2) / 14
+
   return Net.create_bot({
     texture_path = texture_path,
     animation_path = BotAnimation.path,
     animation = BotAnimation.get_state(block_id, z_offset),
     area_id = area_id,
     warp_in = false,
-    x = int_x + .5 + .02 * z_offset + (2/14),
-    y = int_y + .5 + .02 * z_offset + (2/14),
+    x = int_x + sorting_offset,
+    y = int_y + sorting_offset,
     z = int_z
   })
 end

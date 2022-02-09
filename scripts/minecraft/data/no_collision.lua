@@ -8,7 +8,11 @@ local NoCollision = {
   Blocks.OAK_SIGN_N,
   Blocks.OAK_SIGN_E,
   Blocks.OAK_SIGN_W,
-  Blocks.OAK_SIGN_S
+  Blocks.OAK_SIGN_S,
+  Blocks.LADDER_E,
+  Blocks.LADDER_W,
+  Blocks.LADDER_N,
+  Blocks.LADDER_S,
 }
 
 append_table(NoCollision, Liquids.All)

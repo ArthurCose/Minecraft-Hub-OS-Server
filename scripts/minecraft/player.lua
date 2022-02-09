@@ -1,6 +1,7 @@
 local Blocks = require("scripts/minecraft/data/blocks")
 local BlockLoot = require("scripts/minecraft/data/block_loot")
 local Liquids = require("scripts/minecraft/data/liquids")
+local Climbable = require("scripts/minecraft/data/climbable")
 local Tags = require("scripts/minecraft/data/tags")
 local NoCollision = require("scripts/minecraft/data/no_collision")
 local MenuColors = require("scripts/minecraft/menu/menu_colors")
@@ -58,7 +59,7 @@ function Player:tick()
 
   local block_below_id = world:get_block(self.int_x, self.int_y, self.int_z - world.layer_diff)
 
-  if includes(NoCollision, block_below_id) and not includes(Liquids.Full, block_below_id) then
+  if includes(NoCollision, block_below_id) and not includes(Climbable, block_below_id) then
     if self.floating_time >= 3 then
       -- fall if the player appears stuck in the air
       self:fall_towards(self.x, self.y)

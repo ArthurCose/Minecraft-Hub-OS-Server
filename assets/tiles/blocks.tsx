@@ -7,6 +7,26 @@
    <property name="Shadow" value="Never"/>
   </properties>
  </tile>
+ <tile id="36">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
+ </tile>
+ <tile id="37">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
+ </tile>
+ <tile id="38">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
+ </tile>
+ <tile id="39">
+  <properties>
+   <property name="Shadow" value="Never"/>
+  </properties>
+ </tile>
  <tile id="56">
   <properties>
    <property name="Shadow" value="Never"/>

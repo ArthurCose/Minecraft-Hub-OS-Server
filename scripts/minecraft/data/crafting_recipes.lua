@@ -44,16 +44,20 @@ local CraftingRecipes = {
       result = { id = "BUCKET", count = 1 },
       required = { { id = "IRON", count = 3 } }
     },
-    { -- temporary recipe? (stone cutter in the future)
-      result = { id = "OAK_STAIRS", count = 4 },
-      required = { { id = "OAK_PLANKS", count = 6 } }
-    },
     {
       result = { id = "OAK_SIGN", count = 1 },
       required = {
         { id = "OAK_PLANKS", count = 6 },
         { id = "STICK", count = 1 }
       }
+    },
+    { -- temporary recipe? (stone cutter in the future)
+      result = { id = "OAK_STAIRS", count = 4 },
+      required = { { id = "OAK_PLANKS", count = 6 } }
+    },
+    {
+      result = { id = "LADDER", count = 3 },
+      required = { { id = "STICK", count = 7 } }
     },
     {
       result = { id = "CHEST", count = 1 },
