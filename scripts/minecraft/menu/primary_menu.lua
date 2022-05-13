@@ -23,25 +23,27 @@ function PrimaryMenu:open()
     { id = "INTERACT", read = true, title = "INTERACT", author = "" },
   }
 
-  Net.open_board(self.player.id, "Actions", MenuColors.DEFAULT_COLOR, posts)
+  local emitter = Net.open_board(self.player.id, "Actions", MenuColors.DEFAULT_COLOR, posts)
+
+  emitter:on("post_selection", function(event)
+    local post_id = event.post_id
+
+    if post_id == "PUNCH" then
+      self.player.action = PlayerActions.PUNCH
+      self.player:close_menus()
+    elseif post_id == "JUMP" then
+      self.player.action = PlayerActions.JUMP
+      self.player:close_menus()
+    elseif post_id == "INVENTORY" then
+      self.player:open_menu(InventoryMenu:new(self.player))
+    elseif post_id == "INTERACT" then
+      self.player.action = PlayerActions.INTERACT
+      self.player:close_menus()
+    end
+  end)
 end
 
 function PrimaryMenu:update()
-end
-
-function PrimaryMenu:handle_selection(post_id)
-  if post_id == "PUNCH" then
-    self.player.action = PlayerActions.PUNCH
-    self.player:close_menus()
-  elseif post_id == "JUMP" then
-    self.player.action = PlayerActions.JUMP
-    self.player:close_menus()
-  elseif post_id == "INVENTORY" then
-    self.player:open_menu(InventoryMenu:new(self.player))
-  elseif post_id == "INTERACT" then
-    self.player.action = PlayerActions.INTERACT
-    self.player:close_menus()
-  end
 end
 
 return PrimaryMenu

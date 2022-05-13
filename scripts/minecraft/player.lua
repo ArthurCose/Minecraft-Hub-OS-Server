@@ -22,8 +22,9 @@ function Player:new(player_id)
     instance = nil,
     avatar = {},
     menus = {}, -- { id, (menu specific) }
+    last_menu_count = 1,
     items = { -- { id, count }[]
-    -- starting items
+      -- starting items
       { id = "OAK_SAPLING", count = 1 },
       { id = "COBBLESTONE", count = 8 },
       { id = "DIRT", count = 16 }
@@ -221,7 +222,7 @@ function Player:try_place_block(x, y, z)
   local world = self.instance.world
 
   -- test at the ground, feet, and head
-  for z_offset = - world.layer_diff, world.layer_diff, world.layer_diff do
+  for z_offset = -world.layer_diff, world.layer_diff, world.layer_diff do
     local block_id = world:get_block(x, y, z + z_offset)
 
     if block_id == Blocks.AIR or includes(Liquids.Flowing, block_id) then
@@ -445,7 +446,7 @@ function Player:try_interact(x, y, z)
 end
 
 function Player:open_menu(menu)
-  self.menus[#self.menus+1] = menu
+  self.menus[#self.menus + 1] = menu
   menu:open()
 end
 
@@ -459,44 +460,37 @@ function Player:update_menu()
   current_menu:update()
 end
 
-function Player:handle_post_selection(post_id)
-  local current_menu = self.menus[#self.menus]
-
-  if not current_menu then
-    return
-  end
-
-  current_menu:handle_selection(post_id)
-end
-
 function Player:close_menus()
+  self.last_menu_count = 1
   Net.close_bbs(self.id)
   self.menus = {}
 end
 
 function Player:handle_board_close()
-  self.menus[#self.menus] = nil
-end
+  local last_menu_count = self.last_menu_count
 
--- textbox handling taken from the liberation server --
-
-local function create_textbox_promise(self)
-  if self.disconnected then
-    return Async.create_promise(function(resolve)
-      resolve()
-    end)
+  if last_menu_count < #self.menus then
+    -- a menu has been opened on top as the menu count has gone up
+    self.last_menu_count = math.max(1, #self.menus)
+    return
   end
 
-  return Async.create_promise(function(resolve)
-    self.textbox_promise_resolvers[#self.textbox_promise_resolvers+1] = resolve
-  end)
+  -- remove the last top menu
+  self.menus[#self.menus] = nil
+
+  self.last_menu_count = math.max(1, #self.menus)
+
+  -- reopen the previous menu
+  local top_menu = self.menus[#self.menus]
+
+  if top_menu then
+    top_menu:open()
+  end
 end
 
 -- all messages to this player should be made through this class
 function Player:message(message, texture_path, animation_path)
-  Net.message_player(self.id, message, texture_path, animation_path)
-
-  return create_textbox_promise(self)
+  return Async.message_player(self.id, message, texture_path, animation_path)
 end
 
 -- all messages to this player should be made through this class
@@ -506,9 +500,7 @@ end
 
 -- all questions to this player should be made through this class
 function Player:question(question, texture_path, animation_path)
-  Net.question_player(self.id, question, texture_path, animation_path)
-
-  return create_textbox_promise(self)
+  return Async.question_player(self.id, question, texture_path, animation_path)
 end
 
 -- all questions to this player should be made through this class
@@ -518,22 +510,12 @@ end
 
 -- all quizzes to this player should be made through this class
 function Player:quiz(a, b, c, texture_path, animation_path)
-  Net.quiz_player(self.id, a, b, c, texture_path, animation_path)
-
-  return create_textbox_promise(self)
+  return Async.quiz_player(self.id, a, b, c, texture_path, animation_path)
 end
 
 -- all prompts to this player should be made through this class
 function Player:prompt(character_limit, default_text)
-  Net.prompt_player(self.id, character_limit, default_text)
-
-  return create_textbox_promise(self)
-end
-
--- will throw if a textbox is sent to the player using Net directly
-function Player:handle_textbox_response(response)
-  local resolve = table.remove(self.textbox_promise_resolvers, 1)
-  resolve(response)
+  return Async.prompt_player(self.id, character_limit, default_text)
 end
 
 return Player

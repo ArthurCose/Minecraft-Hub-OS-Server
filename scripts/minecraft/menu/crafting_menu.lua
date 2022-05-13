@@ -4,7 +4,7 @@ local CraftingMenu = {}
 
 function CraftingMenu:new(player, name, color, recipes)
   local menu = {
-    posts = {},
+    posts = nil,
     player = player,
     name = name,
     color = color,
@@ -18,18 +18,19 @@ function CraftingMenu:new(player, name, color, recipes)
 end
 
 function CraftingMenu:open()
+  self.posts = {}
+
   CraftingUtil.generate_recipe_posts(self.recipes, self.player.items, self.posts)
 
-  Net.open_board(self.player.id, self.name, self.color, self.posts)
+  local emitter = Net.open_board(self.player.id, self.name, self.color, self.posts)
+
+  emitter:on("post_selection", function(event)
+    CraftingUtil.craft(self.recipes, self.player.items, event.post_id)
+    self.player:close_menus()
+  end)
 end
 
 function CraftingMenu:update()
-end
-
-
-function CraftingMenu:handle_selection(post_id)
-  CraftingUtil.craft(self.recipes, self.player.items, post_id)
-  self.player:close_menus()
 end
 
 return CraftingMenu

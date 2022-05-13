@@ -5,7 +5,7 @@ local ChestInventorySubmenu = {}
 
 function ChestInventorySubmenu:new(player, tile_entity)
   local menu = {
-    posts = {},
+    posts = nil,
     player = player,
     tile_entity = tile_entity
   }
@@ -17,9 +17,24 @@ function ChestInventorySubmenu:new(player, tile_entity)
 end
 
 function ChestInventorySubmenu:open()
+  self.posts = {}
   InventoryUtil.generate_item_posts(self.player.items, self.posts)
 
-  Net.open_board(self.player.id, "Inventory", MenuColors.DEFAULT_COLOR, self.posts)
+  local emitter = Net.open_board(self.player.id, "Inventory", MenuColors.DEFAULT_COLOR, self.posts)
+  emitter:on("post_selection", function(event)
+    if self.tile_entity.deleted then
+      -- just exit the menu if the chest is gone
+      self.player:close_menus()
+    else
+      -- move one item into the chest
+      local items = self.tile_entity.data.items
+
+      if InventoryUtil.remove_item(self.player.items, event.post_id) then
+        InventoryUtil.add_item(items, event.post_id)
+        InventoryUtil.sync_inventory_menu(self.player, self.player.items, self.posts, 0)
+      end
+    end
+  end)
 end
 
 function ChestInventorySubmenu:update()
@@ -29,21 +44,6 @@ function ChestInventorySubmenu:update()
   end
 
   InventoryUtil.sync_inventory_menu(self.player, self.player.items, self.posts, 0)
-end
-
-function ChestInventorySubmenu:handle_selection(post_id)
-  if self.tile_entity.deleted then
-    -- just exit the menu if the chest is gone
-    self.player:close_menus()
-  else
-    -- move one item into the chest
-    local items = self.tile_entity.data.items
-
-    if InventoryUtil.remove_item(self.player.items, post_id) then
-      InventoryUtil.add_item(items, post_id)
-      InventoryUtil.sync_inventory_menu(self.player, self.player.items, self.posts, 0)
-    end
-  end
 end
 
 return ChestInventorySubmenu
