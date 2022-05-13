@@ -20,7 +20,7 @@ function ChestInventorySubmenu:open()
   self.posts = {}
   InventoryUtil.generate_item_posts(self.player.items, self.posts)
 
-  local emitter = Net.open_board(self.player.id, "Inventory", MenuColors.DEFAULT_COLOR, self.posts)
+  local emitter = Net.open_board(self.player.id, "Inventory", MenuColors.DEFAULT_COLOR, self.posts, true)
   emitter:on("post_selection", function(event)
     if self.tile_entity.deleted then
       -- just exit the menu if the chest is gone

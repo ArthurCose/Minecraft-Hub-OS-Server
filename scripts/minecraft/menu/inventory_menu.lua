@@ -15,7 +15,7 @@ function InventoryMenu:new(player)
 
       InventoryUtil.generate_item_posts(player.items, posts)
 
-      local emitter = Net.open_board(player.id, "Inventory", MenuColors.DEFAULT_COLOR, posts)
+      local emitter = Net.open_board(player.id, "Inventory", MenuColors.DEFAULT_COLOR, posts, true)
 
       emitter:on("post_selection", function(event)
         if event.post_id == "CRAFT" then

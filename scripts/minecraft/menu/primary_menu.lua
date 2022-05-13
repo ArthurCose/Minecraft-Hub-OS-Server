@@ -23,7 +23,7 @@ function PrimaryMenu:open()
     { id = "INTERACT", read = true, title = "INTERACT", author = "" },
   }
 
-  local emitter = Net.open_board(self.player.id, "Actions", MenuColors.DEFAULT_COLOR, posts)
+  local emitter = Net.open_board(self.player.id, "Actions", MenuColors.DEFAULT_COLOR, posts, true)
 
   emitter:on("post_selection", function(event)
     local post_id = event.post_id

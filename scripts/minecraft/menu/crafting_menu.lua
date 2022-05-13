@@ -22,7 +22,7 @@ function CraftingMenu:open()
 
   CraftingUtil.generate_recipe_posts(self.recipes, self.player.items, self.posts)
 
-  local emitter = Net.open_board(self.player.id, self.name, self.color, self.posts)
+  local emitter = Net.open_board(self.player.id, self.name, self.color, self.posts, true)
 
   emitter:on("post_selection", function(event)
     CraftingUtil.craft(self.recipes, self.player.items, event.post_id)

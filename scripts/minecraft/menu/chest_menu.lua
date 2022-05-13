@@ -28,7 +28,7 @@ function ChestMenu:open()
 
   InventoryUtil.generate_item_posts(self.tile_entity.data.items, self.posts)
 
-  local emitter = Net.open_board(self.player.id, "Chest", MenuColors.CHEST_COLOR, self.posts)
+  local emitter = Net.open_board(self.player.id, "Chest", MenuColors.CHEST_COLOR, self.posts, true)
 
   emitter:on("post_selection", function(event)
     local post_id = event.post_id
