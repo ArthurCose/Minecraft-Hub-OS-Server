@@ -1,5 +1,5 @@
 .vscode
 raw assets
 *.sh
-_.*
+_*
 world.json
