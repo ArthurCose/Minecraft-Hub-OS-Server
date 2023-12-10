@@ -85,7 +85,7 @@ local function create_pillar(self, int_x, int_y, int_z)
       bot_id = create_bot(block_id, area_id, z_offset, int_x, int_y, int_z)
     end
 
-    pillar.bots[#pillar.bots+1] = {
+    pillar.bots[#pillar.bots + 1] = {
       id = bot_id,
       block_id = block_id,
       z_offset = z_offset,
@@ -151,7 +151,6 @@ function Occlusion:update_around(int_x, int_y, int_z)
   end
 end
 
-
 function Occlusion:despawn_out_of_range(int_z)
   local bot_layer = self.bot_layers[int_z]
 
@@ -162,10 +161,13 @@ function Occlusion:despawn_out_of_range(int_z)
   local pending_removal = {}
 
   for i, pillar in ipairs(bot_layer) do
-    local chebyshev_distance = math.max(math.abs(pillar.int_x - self.player.int_x), math.abs(pillar.int_y - self.player.int_y))
+    local chebyshev_distance = math.max(
+      math.abs(pillar.int_x - self.player.int_x),
+      math.abs(pillar.int_y - self.player.int_y)
+    )
 
     if chebyshev_distance > DESPAWN_RANGE then
-      pending_removal[#pending_removal+1] = i
+      pending_removal[#pending_removal + 1] = i
     end
   end
 

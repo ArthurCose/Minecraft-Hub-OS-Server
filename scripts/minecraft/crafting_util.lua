@@ -13,7 +13,12 @@ function CraftingUtil.generate_recipe_posts(recipes, items, posts)
     end
 
     if matches then
-      posts[#posts+1] = { id = recipe_index, read = true, title = recipe.result.id, author = recipe.result.count }
+      posts[#posts + 1] = {
+        id = recipe_index,
+        read = true,
+        title = recipe.result.id,
+        author = recipe.result.count
+      }
     end
   end
 end

@@ -31,7 +31,7 @@ local function resolve_interaction_type(player, world, int_x, int_y, int_z)
   if player.action == PlayerActions.ITEM and player.selected_item then
     local suffix = player:get_block_direction_suffix(int_x, int_y, int_z)
 
-    if world:in_bounds(int_x, int_y, int_z) and Blocks[player.selected_item.id] or Blocks[player.selected_item.id..suffix] then
+    if world:in_bounds(int_x, int_y, int_z) and Blocks[player.selected_item.id] or Blocks[player.selected_item.id .. suffix] then
       return InteractionType.PLACE
     end
   elseif player.action == PlayerActions.PUNCH then
@@ -110,8 +110,8 @@ function SelectionPreview:update(world, player)
       texture_path = TEXTURE_PATH,
       animation_path = ANIMATION_PATH,
       animation = new_animation,
-      x = new_x + .5 + .02 * z_offset + (3/14),
-      y = new_y + .5 + .02 * z_offset + (3/14),
+      x = new_x + .5 + .02 * z_offset + (3 / 14),
+      y = new_y + .5 + .02 * z_offset + (3 / 14),
       z = player.int_z,
       warp_in = false,
     })

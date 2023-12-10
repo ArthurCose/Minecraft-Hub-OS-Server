@@ -48,7 +48,7 @@ local CraftingRecipes = {
       result = { id = "OAK_SIGN", count = 1 },
       required = {
         { id = "OAK_PLANKS", count = 6 },
-        { id = "STICK", count = 1 }
+        { id = "STICK",      count = 1 }
       }
     },
     { -- temporary recipe? (stone cutter in the future)
@@ -71,7 +71,7 @@ local CraftingRecipes = {
       result = { id = "STONE_CUTTER", count = 1 },
       required = {
         { id = "STONE", count = 3 },
-        { id = "IRON", count = 1 }
+        { id = "IRON",  count = 1 }
       }
     },
   },
@@ -80,69 +80,69 @@ local CraftingRecipes = {
       result = { id = "IRON", count = 8 },
       required = {
         { id = "RAW_IRON", count = 8 },
-        { id = "#coal", count = 1 }
+        { id = "#coal",    count = 1 }
       }
     },
     {
       result = { id = "IRON", count = 1 },
       required = {
         { id = "RAW_IRON", count = 1 },
-        { id = "#planks", count = 1 }
+        { id = "#planks",  count = 1 }
       }
     },
     {
       result = { id = "GOLD", count = 8 },
       required = {
         { id = "RAW_GOLD", count = 8 },
-        { id = "#coal", count = 1 }
+        { id = "#coal",    count = 1 }
       }
     },
     {
       result = { id = "GOLD", count = 1 },
       required = {
         { id = "RAW_GOLD", count = 1 },
-        { id = "#planks", count = 1 }
+        { id = "#planks",  count = 1 }
       }
     },
     {
       result = { id = "COPPER", count = 8 },
       required = {
         { id = "RAW_COPPER", count = 8 },
-        { id = "#coal", count = 1 }
+        { id = "#coal",      count = 1 }
       }
     },
     {
       result = { id = "COPPER", count = 1 },
       required = {
         { id = "RAW_COPPER", count = 1 },
-        { id = "#planks", count = 1 }
+        { id = "#planks",    count = 1 }
       }
     },
     {
       result = { id = "STONE", count = 8 },
       required = {
         { id = "COBBLESTONE", count = 8 },
-        { id = "#coal", count = 1 }
+        { id = "#coal",       count = 1 }
       }
     },
     {
       result = { id = "STONE", count = 1 },
       required = {
         { id = "COBBLESTONE", count = 1 },
-        { id = "#planks", count = 1 }
+        { id = "#planks",     count = 1 }
       }
     },
     {
       result = { id = "GLASS", count = 8 },
       required = {
-        { id = "SAND", count = 8 },
+        { id = "SAND",  count = 8 },
         { id = "#coal", count = 1 }
       }
     },
     {
       result = { id = "GLASS", count = 1 },
       required = {
-        { id = "SAND", count = 1 },
+        { id = "SAND",    count = 1 },
         { id = "#planks", count = 1 }
       }
     },
@@ -156,7 +156,7 @@ local CraftingRecipes = {
     {
       result = { id = "CHARCOAL", count = 1 },
       required = {
-        { id = "#logs", count = 1 },
+        { id = "#logs",   count = 1 },
         { id = "#planks", count = 1 }
       }
     },

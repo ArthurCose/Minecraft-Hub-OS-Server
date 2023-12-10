@@ -20,7 +20,7 @@ function InventoryUtil.add_item(items, item_id, count)
     end
   end
 
-  items[#items+1] = {
+  items[#items + 1] = {
     id = item_id,
     count = count
   }
@@ -44,7 +44,7 @@ function InventoryUtil.remove_item(items, item_id, count)
         total_matching = total_matching + old_count
 
         if item.count <= 0 then
-          pending_removal[#pending_removal+1] = i
+          pending_removal[#pending_removal + 1] = i
         end
 
         if total_matching >= count then
@@ -111,7 +111,7 @@ end
 
 function InventoryUtil.generate_item_posts(items, posts)
   for _, item in ipairs(items) do
-    posts[#posts+1] = { id = item.id, read = true, title = item.id, author = item.count }
+    posts[#posts + 1] = { id = item.id, read = true, title = item.id, author = item.count }
   end
 end
 
@@ -142,8 +142,8 @@ function InventoryUtil.sync_inventory_menu(player, items, posts, start_offset)
         local next_item = items[i]
 
         local post = { id = next_item.id, read = true, title = next_item.id, author = next_item.count }
-        new_posts[#new_posts+1] = post
-        posts[#posts+1] = post
+        new_posts[#new_posts + 1] = post
+        posts[#posts + 1] = post
       end
 
       last_post_index = #posts

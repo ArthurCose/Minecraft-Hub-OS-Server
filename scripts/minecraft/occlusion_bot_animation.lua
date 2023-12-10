@@ -24,10 +24,11 @@ end
 local function generate_frame(id, z_offset, col, row)
   local offset_originy = originy + get_originy_offset(id)
 
-  local animation_frame = "animation state=\"" .. get_state(id, z_offset) .."\"\nframe duration=\"1\" "
+  local animation_frame = "animation state=\"" .. get_state(id, z_offset) .. "\"\nframe duration=\"1\" "
   animation_frame = animation_frame .. "x=\"" .. (col * frame_width) .. "\" y=\"" .. (row * frame_height) .. "\" "
   animation_frame = animation_frame .. "w=\"" .. frame_width .. "\" h=\"" .. frame_height .. "\" "
-  animation_frame = animation_frame .. "originx=\"" .. originx .. "\" originy=\"" .. (offset_originy + layer_diff * z_offset) .. "\"\n\n"
+  animation_frame = animation_frame ..
+      "originx=\"" .. originx .. "\" originy=\"" .. (offset_originy + layer_diff * z_offset) .. "\"\n\n"
 
   return animation_frame
 end
@@ -36,7 +37,7 @@ local function generate()
   local cols = 8
   local rows = 13
 
-  local animation = "animation state=\"IDLE_U\"\nempty\n\nanimation state=\"IDLE_D\"\nempty\n\n"
+  local animation = "animation state=\"IDLE_U\"\nblank\n\nanimation state=\"IDLE_D\"\nblank\n\n"
 
   local id = 0
   for row = 0, rows - 1 do

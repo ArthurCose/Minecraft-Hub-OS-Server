@@ -12,12 +12,12 @@ local leaf_block_ids = Helpers.get_block_ids(Tags["#leaves"])
 local function find_log(world, int_x, int_y, int_z)
   local visited_map = {}
   local test_next = {
-    { int_x - 1, int_y, int_z },
-    { int_x + 1, int_y, int_z },
-    { int_x, int_y - 1, int_z },
-    { int_x, int_y + 1, int_z },
-    { int_x, int_y, int_z - 1 },
-    { int_x, int_y, int_z + 1 },
+    { int_x - 1, int_y,     int_z },
+    { int_x + 1, int_y,     int_z },
+    { int_x,     int_y - 1, int_z },
+    { int_x,     int_y + 1, int_z },
+    { int_x,     int_y,     int_z - 1 },
+    { int_x,     int_y,     int_z + 1 },
   }
 
   local function add_to_next_test(test_pos)
@@ -27,8 +27,8 @@ local function find_log(world, int_x, int_y, int_z)
       end
     end
 
-    visited_map[#visited_map+1] = test_pos
-    test_next[#test_next+1] = test_pos
+    visited_map[#visited_map + 1] = test_pos
+    test_next[#test_next + 1] = test_pos
 
     return false
   end

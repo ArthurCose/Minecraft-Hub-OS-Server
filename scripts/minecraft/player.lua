@@ -23,11 +23,11 @@ function Player:new(player_id)
     avatar = {},
     menus = {}, -- { id, (menu specific) }
     last_menu_count = 1,
-    items = { -- { id, count }[]
+    items = {   -- { id, count }[]
       -- starting items
       { id = "OAK_SAPLING", count = 1 },
       { id = "COBBLESTONE", count = 8 },
-      { id = "DIRT", count = 16 }
+      { id = "DIRT",        count = 16 }
     },
     action = PlayerActions.PUNCH,
     selected_item = nil,
@@ -333,7 +333,7 @@ function Player:animate_jump_up(player_id, x, y, z)
       properties = {
         { property = "X", ease = "Linear", value = x },
         { property = "Y", ease = "Linear", value = y },
-        { property = "Z", ease = "In", value = z }
+        { property = "Z", ease = "In",     value = z }
       },
       duration = total_time * 1 / 3
     }
@@ -428,7 +428,8 @@ function Player:try_interact(x, y, z)
     local block_id = world:get_block(x, y, test_z)
 
     if block_id == Blocks.CRAFTING_TABLE then
-      self:open_menu(CraftingMenu:new(self, "Crafting Table", MenuColors.CRAFTING_TABLE_COLOR, CraftingRecipes.CraftingTable))
+      self:open_menu(CraftingMenu:new(self, "Crafting Table", MenuColors.CRAFTING_TABLE_COLOR,
+        CraftingRecipes.CraftingTable))
       break
     elseif block_id == Blocks.FURNACE or block_id == Blocks.FURNACE_E or block_id == Blocks.FURNACE_N then
       self:open_menu(CraftingMenu:new(self, "Furnace", MenuColors.FURNACE_COLOR, CraftingRecipes.Furnace))

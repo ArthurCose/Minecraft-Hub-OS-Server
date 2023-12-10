@@ -17,10 +17,10 @@ end
 
 function PrimaryMenu:open()
   local posts = {
-    { id = "INVENTORY", read = true, title = "INVENTORY", author = "" },
-    { id = "PUNCH", read = true, title = "PUNCH/FALL", author = "" },
-    { id = "JUMP", read = true, title = "JUMP", author = "" },
-    { id = "INTERACT", read = true, title = "INTERACT", author = "" },
+    { id = "INVENTORY", read = true, title = "INVENTORY",  author = "" },
+    { id = "PUNCH",     read = true, title = "PUNCH/FALL", author = "" },
+    { id = "JUMP",      read = true, title = "JUMP",       author = "" },
+    { id = "INTERACT",  read = true, title = "INTERACT",   author = "" },
   }
 
   local emitter = Net.open_board(self.player.id, "Actions", MenuColors.DEFAULT_COLOR, posts, true)

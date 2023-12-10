@@ -54,7 +54,7 @@ append_table(Liquids.Flowing, Liquids.FlowingLava)
 
 for _, block_id in ipairs(Liquids.All) do
   if not includes(Liquids.Full, block_id) then
-    Liquids.NonFull[#Liquids.NonFull+1] = block_id
+    Liquids.NonFull[#Liquids.NonFull + 1] = block_id
   end
 end
 

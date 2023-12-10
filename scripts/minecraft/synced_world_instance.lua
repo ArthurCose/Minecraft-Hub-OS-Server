@@ -56,7 +56,7 @@ function SyncedWorldInstance:add_player_mirror(player, warp_in)
   mirror.player = player
   mirror.avatar = player.avatar
 
-  self.player_mirrors[#self.player_mirrors+1] = mirror
+  self.player_mirrors[#self.player_mirrors + 1] = mirror
 end
 
 function SyncedWorldInstance:remove_player_mirror(player)
