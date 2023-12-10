@@ -11,7 +11,7 @@ local POLL_RATE = 10 * 60
 local MESSAGE_CONSTANT =
     "name=" .. Net.encode_uri_component(NAME) ..
     "&message=" .. Net.encode_uri_component(MESSAGE) ..
-    "&data=" .. WARP_DATA
+    "&data=" .. WARP_DATA ..
     "&online="
 
 local online_count = 0
