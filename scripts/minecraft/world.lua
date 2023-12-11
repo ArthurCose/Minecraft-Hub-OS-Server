@@ -25,7 +25,7 @@ function World:new(area_id)
       spawn_x = 0,
       spawn_y = 0,
       spawn_z = 0,
-      blocks = {}, -- int[][][]
+      blocks = {},        -- int[][][]
       tile_entities = {}, -- { x, y, z, data, deleted? }[]
     },
     players = {},
@@ -100,8 +100,8 @@ function World:use_area(area_id)
   self.first_walkable_gid = Net.get_tileset(area_id, "/server/assets/tiles/blocks.tsx").first_gid
   self.first_collidable_gid = Net.get_tileset(area_id, "/server/assets/tiles/collidable_blocks.tsx").first_gid
 
-  self.width = Net.get_width(area_id)
-  self.height = Net.get_height(area_id)
+  self.width = Net.get_layer_width(area_id)
+  self.height = Net.get_layer_height(area_id)
   self.layers = math.ceil(Net.get_layer_count(area_id) / World.layer_diff) - 1 - World.player_layer_offset
 
   -- load map into self.data.blocks
@@ -165,7 +165,9 @@ end
 
 function World:set_block(x, y, z, block_id)
   if type(block_id) ~= "number" then
-    error("attempted to set block at (" .. x .. ", " .. y .. ", " .. z.. ") with invalid type \"" .. type(block_id) .. "\"")
+    error(
+      "attempted to set block at (" .. x .. ", " .. y .. ", " .. z .. ") with invalid type \"" .. type(block_id) .. "\""
+    )
   end
 
   local layerIndex = math.floor(z / World.layer_diff) + 1 - World.player_layer_offset
@@ -270,7 +272,7 @@ function World:request_tile_entity(x, y, z)
     data = {}
   }
 
-  self.data.tile_entities[#self.data.tile_entities+1] = tile_entity
+  self.data.tile_entities[#self.data.tile_entities + 1] = tile_entity
   return tile_entity
 end
 
