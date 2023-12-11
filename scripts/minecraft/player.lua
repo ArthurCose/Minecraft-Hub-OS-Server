@@ -463,7 +463,7 @@ end
 
 function Player:close_menus()
   self.last_menu_count = 1
-  Net.close_bbs(self.id)
+  Net.close_board(self.id)
   self.menus = {}
 end
 
