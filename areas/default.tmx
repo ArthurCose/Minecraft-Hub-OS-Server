@@ -5,7 +5,7 @@
   <property name="Background Animation" value="/server/assets/backgrounds/sky.animation"/>
   <property name="Background Texture" value="/server/assets/backgrounds/sky.png"/>
   <property name="Name" value="Skyblock"/>
-  <property name="Song" value="/server/assets/music/MIDI/DJRezzed - Subwoofer Lullaby.mid"/>
+  <property name="Music" value="/server/assets/music/MIDI/DJRezzed - Subwoofer Lullaby.mid"/>
  </properties>
  <tileset firstgid="1" source="../assets/tiles/blocks.tsx"/>
  <tileset firstgid="105" source="../assets/tiles/collidable_blocks.tsx"/>
