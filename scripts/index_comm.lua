@@ -20,6 +20,10 @@ Net:on("player_disconnect", function()
   online_count = online_count - 1
 end)
 
+local function send_analytics()
+  Async.message_server(INDEX_ADDRESS, "index_analytics:online=" .. online_count)
+end
+
 local server_message_handlers = {
   index_query = function(event)
     local response = "index_response:name=" .. Net.encode_uri_component(NAME) ..
@@ -31,6 +35,7 @@ local server_message_handlers = {
   end,
   index_verify = function(event, data)
     Async.message_server(event.address, "index_verify:" .. data)
+    send_analytics()
   end
 }
 
@@ -51,8 +56,7 @@ Net:on("server_message", function(event)
 end)
 
 local function loop()
-  Async.message_server(INDEX_ADDRESS, "index_analytics:online=" .. online_count)
-
+  send_analytics()
   Async.sleep(POLL_RATE).and_then(loop)
 end
 
