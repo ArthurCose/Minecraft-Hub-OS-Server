@@ -70,7 +70,7 @@ function Player:tick()
     end
   end
 
-  if includes(Liquids.Lava, world:get_block(self.int_x, self.int_y, self.int_z)) then
+  if Net.get_player_element(self.id) ~= "Fire" and includes(Liquids.Lava, world:get_block(self.int_x, self.int_y, self.int_z)) then
     self:respawn()
   end
 end
