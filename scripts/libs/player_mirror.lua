@@ -24,6 +24,7 @@ function PlayerMirror:new(area_id, player_id, x, y, z, warp_in)
     z = z,
     direction = Net.get_player_direction(player_id)
   })
+  Net.set_bot_map_color(bot_id, { r = 255, g = 255, b = 0 })
 
   local screen_x, screen_y = world_to_screen(x, y)
 
