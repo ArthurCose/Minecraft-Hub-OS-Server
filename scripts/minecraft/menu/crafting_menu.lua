@@ -26,7 +26,7 @@ function CraftingMenu:open()
 
   emitter:on("post_selection", function(event)
     CraftingUtil.craft(self.recipes, self.player.items, event.post_id)
-    self.player:close_menus()
+    self.player:close_menu()
   end)
 end
 

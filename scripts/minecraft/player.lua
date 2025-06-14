@@ -467,15 +467,7 @@ function Player:close_menus()
   self.menus = {}
 end
 
-function Player:handle_board_close()
-  local last_menu_count = self.last_menu_count
-
-  if last_menu_count < #self.menus then
-    -- a menu has been opened on top as the menu count has gone up
-    self.last_menu_count = math.max(1, #self.menus)
-    return
-  end
-
+local function close_top_menu_internal(self)
   -- remove the last top menu
   self.menus[#self.menus] = nil
 
@@ -487,6 +479,27 @@ function Player:handle_board_close()
   if top_menu then
     top_menu:open()
   end
+end
+
+function Player:close_menu()
+  close_top_menu_internal(self)
+  self.last_menu_count = self.last_menu_count - 1
+
+  if #self.menus == 0 then
+    Net.close_board(self.id)
+  end
+end
+
+function Player:handle_board_close()
+  local last_menu_count = self.last_menu_count
+
+  if last_menu_count < #self.menus then
+    -- a menu has been opened on top as the menu count has gone up
+    self.last_menu_count = math.max(1, #self.menus)
+    return
+  end
+
+  close_top_menu_internal(self)
 end
 
 -- all messages to this player should be made through this class
