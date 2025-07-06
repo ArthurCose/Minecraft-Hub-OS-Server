@@ -212,8 +212,9 @@ end
 
 function Player:try_place_block(x, y, z)
   if not self.selected_item then
-    -- nothing to place
-    return false
+    -- nothing to place, fall back to interaction
+    self:try_interact(x, y, z)
+    return
   end
 
   x = math.floor(x)
@@ -225,7 +226,7 @@ function Player:try_place_block(x, y, z)
 
   if not block then
     -- not placeable
-    return false
+    return
   end
 
   local world = self.instance.world
@@ -238,8 +239,6 @@ function Player:try_place_block(x, y, z)
       return place_block(self, x, y, z + z_offset)
     end
   end
-
-  return false
 end
 
 local function break_block(player, x, y, z)
@@ -426,13 +425,15 @@ function Player:respawn()
   end)
 end
 
+local interact_test_order = { 0, 1, -1 }
+
 function Player:try_interact(x, y, z)
   x = math.floor(x)
   y = math.floor(y)
 
   local world = self.instance.world
 
-  for i = 0, 1 do
+  for _, i in ipairs(interact_test_order) do
     local test_z = z + i * world.layer_diff
     local block_id = world:get_block(x, y, test_z)
 
