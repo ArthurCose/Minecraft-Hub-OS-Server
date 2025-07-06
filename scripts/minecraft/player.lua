@@ -315,6 +315,12 @@ function Player:try_jump_up(x, y, z)
   if (feet_id ~= Blocks.AIR and not includes(Liquids.NonFull, feet_id)) and includes(NoCollision, head_id) and includes(NoCollision, ceiling_id) then
     self:animate_jump_up(self.id, x, y, int_z + world.layer_diff)
   end
+
+  -- try again on our current position instead of the target position
+  -- makes it easier to climb ladders or swim
+  if x ~= self.x and y ~= self.y then
+    self:try_jump_up(self.x, self.y, z)
+  end
 end
 
 function Player:lockout(time)
