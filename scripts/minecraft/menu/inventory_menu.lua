@@ -4,8 +4,10 @@ local CraftingRecipes = require("scripts/minecraft/data/crafting_recipes")
 local InventoryUtil = require("scripts/minecraft/inventory_util")
 local PlayerActions = require("scripts/minecraft/player_actions")
 
+---@class InventoryMenu
 local InventoryMenu = {}
 
+---@param player Player
 function InventoryMenu:new(player)
   return {
     open = function()

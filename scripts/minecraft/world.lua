@@ -1,4 +1,4 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 local TileEntities = require("scripts/minecraft/data/tile_entities")
 local NoCollision = require("scripts/minecraft/data/no_collision")
 local Climbable = require("scripts/minecraft/data/climbable")
@@ -7,12 +7,37 @@ local SyncedWorldInstance = require("scripts/minecraft/synced_world_instance")
 local includes = require("scripts/libs/includes")
 
 
+---@class TileEntity
+---@field x number
+---@field y number
+---@field z number
+---@field data any
+---@field deleted boolean
+
+---@class WorldSaveData
+---@field block_dictionary table<string, number>
+---@field spawn_x number
+---@field spawn_y number
+---@field spawn_z number
+---@field blocks integer[][][]
+---@field tile_entities TileEntity[]
+
+---@class World
+---@field area_id string
+---@field first_walkable_gid number
+---@field first_collidable_gid number
+---@field width number
+---@field height number
+---@field layers number
+---@field data WorldSaveData
+---@field players Player[],
 local World = {
   player_layer_offset = 1,
   layer_diff = 2,
 }
 
 function World:new(area_id)
+  ---@type World
   local world = {
     area_id = "default",
     first_walkable_gid = 0,
@@ -21,7 +46,7 @@ function World:new(area_id)
     height = 0,
     layers = 0,
     data = {
-      block_dictionary = Blocks,
+      block_dictionary = Block,
       spawn_x = 0,
       spawn_y = 0,
       spawn_z = 0,
@@ -39,16 +64,18 @@ function World:new(area_id)
   return world
 end
 
+---@param world World
 local function resolve_block_id(world, x, y, z)
   local tile_data = Net.get_tile(world.area_id, x, y, z)
 
   if not tile_data or tile_data.gid < world.first_walkable_gid then
-    return Blocks.AIR
+    return Block.AIR
   end
 
   return tile_data.gid - world.first_walkable_gid
 end
 
+---@param world World
 local function set_tile(world, x, y, z, gid)
   Net.set_tile(world.area_id, x, y, z, gid)
 
@@ -57,6 +84,7 @@ local function set_tile(world, x, y, z, gid)
   end
 end
 
+---@param world World
 local function update_tile(world, x, y, z)
   local render_block_z = z + World.player_layer_offset * World.layer_diff
   local render_block_id = world:get_block(x, y, render_block_z)
@@ -85,7 +113,7 @@ local function update_tile(world, x, y, z)
   if can_walk then
     -- we can walk through air if there's ground
     set_tile(world, x, y, z, world.first_walkable_gid + render_block_id)
-  elseif render_block_id == Blocks.AIR then
+  elseif render_block_id == Block.AIR then
     -- no ground
     -- just set it to blank if there's no collision and it should appear as air
     set_tile(world, x, y, z, 0)
@@ -117,7 +145,7 @@ function World:use_area(area_id)
         local block_id = resolve_block_id(self, x, y, z * World.layer_diff)
         row[x + 1] = block_id
 
-        if block_id == Blocks.BEDROCK then
+        if block_id == Block.BEDROCK then
           -- resolve spawn_z through set_spawn_position later
           self.data.spawn_x = x
           self.data.spawn_y = y
@@ -157,10 +185,10 @@ end
 function World:get_block(x, y, z)
   z = math.floor(z / World.layer_diff) - World.player_layer_offset
   local layer = self.data.blocks[z + 1]
-  if layer == nil then return Blocks.AIR end
+  if layer == nil then return Block.AIR end
   local row = layer[y + 1]
-  if row == nil then return Blocks.AIR end
-  return row[x + 1] or Blocks.AIR
+  if row == nil then return Block.AIR end
+  return row[x + 1] or Block.AIR
 end
 
 function World:set_block(x, y, z, block_id)
@@ -276,6 +304,7 @@ function World:request_tile_entity(x, y, z)
   return tile_entity
 end
 
+---@param player Player
 function World:connect_player(player)
   player.instance = SyncedWorldInstance:new(self, player, "minecraft-" .. player.id)
 
@@ -288,6 +317,7 @@ function World:connect_player(player)
   self.players[player.id] = player
 end
 
+---@param player Player
 function World:handle_player_join(player)
   -- add the player to other instances
   for _, other_player in pairs(self.players) do
@@ -297,6 +327,7 @@ function World:handle_player_join(player)
   end
 end
 
+---@param player Player
 function World:disconnect_player(player)
   player.instance:destroy()
   player.instance = nil

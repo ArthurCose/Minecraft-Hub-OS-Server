@@ -1,4 +1,5 @@
-local Blocks = {
+---@enum Block
+local Block = {
   DIRT = 0,
   GRASS_BLOCK = 1,
   DIRT_PATH = 2,
@@ -88,4 +89,4 @@ local Blocks = {
   STONE_BRICK_STAIRS = 89,
 }
 
-return Blocks
+return Block

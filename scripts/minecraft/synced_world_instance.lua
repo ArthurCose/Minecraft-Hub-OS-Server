@@ -2,9 +2,20 @@ local Occlusion = require("scripts/minecraft/occlusion")
 local SelectionPreview = require("scripts/minecraft/selection_preview")
 local PlayerMirror = require("scripts/libs/player_mirror")
 
+---@class SyncedWorldInstance
+---@field id string,
+---@field world World
+---@field player Player
+---@field player_mirrors PlayerMirror[]
+---@field occlusion Occlusion
+---@field selection_preview SelectionPreview
 local SyncedWorldInstance = {}
 
+---@param world World
+---@param player Player
+---@param instance_id string
 function SyncedWorldInstance:new(world, player, instance_id)
+  ---@type SyncedWorldInstance
   local instance = {
     id = instance_id,
     world = world,
@@ -39,10 +50,13 @@ function SyncedWorldInstance:tick()
   end
 end
 
+---@param player Player
 function SyncedWorldInstance:handle_player_move(player)
   self.occlusion:handle_player_move(player)
 end
 
+---@param player Player
+---@param emote string
 function SyncedWorldInstance:handle_player_emote(player, emote)
   for _, mirror in ipairs(self.player_mirrors) do
     if mirror.player == player then
@@ -51,14 +65,15 @@ function SyncedWorldInstance:handle_player_emote(player, emote)
   end
 end
 
+---@param player Player
+---@param warp_in boolean
 function SyncedWorldInstance:add_player_mirror(player, warp_in)
-  local mirror = PlayerMirror:new(self.id, player.id, player.x, player.y, player.z, warp_in)
-  mirror.player = player
-  mirror.avatar = player.avatar
+  local mirror = PlayerMirror:new(self.id, player, warp_in)
 
   self.player_mirrors[#self.player_mirrors + 1] = mirror
 end
 
+---@param player Player
 function SyncedWorldInstance:remove_player_mirror(player)
   for i, mirror in ipairs(self.player_mirrors) do
     if mirror.player == player then

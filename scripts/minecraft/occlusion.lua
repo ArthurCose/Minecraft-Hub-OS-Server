@@ -1,7 +1,19 @@
 local texture_path = "/server/assets/tiles/blocks.png"
 local BotAnimation = require("scripts/minecraft/occlusion_bot_animation")
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 
+---@class OcclusionPillar
+---@field int_x number
+---@field int_y number
+---@field int_z number
+---@field bots { id: Net.ActorId?, block_id: number, z_offset: number }[]
+
+---@class Occlusion
+---@field player Player
+---@field last_int_x number
+---@field last_int_y number
+---@field last_int_z number
+---@field bot_layers table<number, OcclusionPillar[]>
 local Occlusion = {}
 
 -- chebyshev distance
@@ -9,7 +21,9 @@ local FALLING_SPAWN_RANGE = 1
 local SPAWN_RANGE = 5
 local DESPAWN_RANGE = 5
 
+---@param player Player
 function Occlusion:new(player)
+  ---@type Occlusion
   local occlusion = {
     player = player,
     last_int_x = 0,
@@ -65,7 +79,9 @@ local function create_bot(block_id, area_id, z_offset, int_x, int_y, int_z)
   })
 end
 
+---@param self Occlusion
 local function create_pillar(self, int_x, int_y, int_z)
+  ---@type OcclusionPillar
   local pillar = {
     int_x = int_x,
     int_y = int_y,
@@ -81,7 +97,7 @@ local function create_pillar(self, int_x, int_y, int_z)
 
     local bot_id = nil
 
-    if block_id ~= Blocks.AIR then
+    if block_id ~= Block.AIR then
       bot_id = create_bot(block_id, area_id, z_offset, int_x, int_y, int_z)
     end
 
@@ -95,6 +111,8 @@ local function create_pillar(self, int_x, int_y, int_z)
   return pillar
 end
 
+---@param self Occlusion
+---@param pillar OcclusionPillar
 local function update_pillar(self, pillar)
   local world = self.player.instance.world
   local area_id = self.player.instance.id
@@ -105,7 +123,7 @@ local function update_pillar(self, pillar)
     if bot.block_id ~= block_id then
       bot.block_id = block_id
 
-      if block_id == Blocks.AIR then
+      if block_id == Block.AIR then
         Net.remove_bot(bot.id)
         bot.id = nil
       elseif not bot.id then
@@ -182,6 +200,7 @@ function Occlusion:despawn_out_of_range(int_z)
   end
 end
 
+---@param player Player
 function Occlusion:handle_player_move(player)
   local same_position = (
     self.last_int_x == player.int_x and

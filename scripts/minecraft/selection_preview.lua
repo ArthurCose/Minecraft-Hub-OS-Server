@@ -1,4 +1,4 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 local Liquids = require("scripts/minecraft/data/liquids")
 local PlayerActions = require("scripts/minecraft/player_actions")
 
@@ -10,9 +10,16 @@ local InteractionType = {
   PLACE = 1
 }
 
+---@class SelectionPreview
+---@field bot_id Net.ActorId?
+---@field int_x number
+---@field int_y number
+---@field int_z number
+---@field animation string
 local SelectionPreview = {}
 
 function SelectionPreview:new()
+  ---@type SelectionPreview
   local selection_preview = {
     bot_id = nil,
     int_x = 0,
@@ -27,11 +34,13 @@ function SelectionPreview:new()
   return selection_preview
 end
 
+---@param world World
+---@param player Player
 local function resolve_interaction_type(player, world, int_x, int_y, int_z)
   if player.action == PlayerActions.ITEM and player.selected_item then
-    local suffix = player:get_block_direction_suffix(int_x, int_y, int_z)
+    local suffix = player:get_block_direction_suffix(int_x, int_y)
 
-    if world:in_bounds(int_x, int_y, int_z) and Blocks[player.selected_item.id] or Blocks[player.selected_item.id .. suffix] then
+    if world:in_bounds(int_x, int_y, int_z) and Block[player.selected_item.id] or Block[player.selected_item.id .. suffix] then
       return InteractionType.PLACE
     end
   elseif player.action == PlayerActions.PUNCH then
@@ -40,6 +49,8 @@ local function resolve_interaction_type(player, world, int_x, int_y, int_z)
   return nil
 end
 
+---@param world World
+---@param player Player
 function SelectionPreview:update(world, player)
   local interaction_pos = player:get_interaction_position(player.x, player.y, player.z)
   local int_x = math.floor(interaction_pos.x)
@@ -53,7 +64,7 @@ function SelectionPreview:update(world, player)
     for z_offset = -world.layer_diff, world.layer_diff, world.layer_diff do
       local block_id = world:get_block(int_x, int_y, int_z + z_offset)
 
-      if block_id == Blocks.AIR or includes(Liquids.Flowing, block_id) then
+      if block_id == Block.AIR or includes(Liquids.Flowing, block_id) then
         new_x = int_x
         new_y = int_y
         new_z = int_z + z_offset
@@ -65,7 +76,7 @@ function SelectionPreview:update(world, player)
     for z_offset = world.layer_diff, -world.layer_diff, -world.layer_diff do
       local block_id = world:get_block(int_x, int_y, int_z + z_offset)
 
-      if block_id ~= Blocks.AIR and not includes(Liquids.All, block_id) then
+      if block_id ~= Block.AIR and not includes(Liquids.All, block_id) then
         local suffix
 
         if z_offset > -world.layer_diff then

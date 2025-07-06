@@ -1,6 +1,9 @@
 local InventoryUtil = require("scripts/minecraft/inventory_util")
 local CraftingUtil = {}
 
+---@param recipes CraftingRecipe[]
+---@param items InventoryItem[]
+---@param posts Net.BoardPost[]
 function CraftingUtil.generate_recipe_posts(recipes, items, posts)
   for recipe_index, recipe in ipairs(recipes) do
     local matches = true
@@ -14,15 +17,18 @@ function CraftingUtil.generate_recipe_posts(recipes, items, posts)
 
     if matches then
       posts[#posts + 1] = {
-        id = recipe_index,
+        id = recipe_index --[[@as string]],
         read = true,
         title = recipe.result.id,
-        author = recipe.result.count
+        author = recipe.result.count --[[@as string]]
       }
     end
   end
 end
 
+---@param recipes CraftingRecipe[]
+---@param items InventoryItem[]
+---@param post_id number
 function CraftingUtil.craft(recipes, items, post_id)
   local recipe = recipes[tonumber(post_id)]
 

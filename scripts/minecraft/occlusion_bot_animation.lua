@@ -1,4 +1,4 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 
 local OUTPUT_PATH = "/server/assets/generated/occlusion_bot.animation"
 
@@ -13,8 +13,8 @@ local function get_state(block_id, z_offset)
 end
 
 local CustomOriginOffset = {
-  [Blocks.LADDER_E] = -7,
-  [Blocks.LADDER_N] = -7,
+  [Block.LADDER_E] = -7,
+  [Block.LADDER_N] = -7,
 }
 
 local function get_originy_offset(block_id)

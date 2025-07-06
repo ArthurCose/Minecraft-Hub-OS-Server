@@ -1,13 +1,13 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 
 local TileEntities = {
-  Blocks.CHEST,
-  Blocks.CHEST_E,
-  Blocks.CHEST_N,
-  Blocks.OAK_SIGN_E,
-  Blocks.OAK_SIGN_W,
-  Blocks.OAK_SIGN_N,
-  Blocks.OAK_SIGN_S,
+  Block.CHEST,
+  Block.CHEST_E,
+  Block.CHEST_N,
+  Block.OAK_SIGN_E,
+  Block.OAK_SIGN_W,
+  Block.OAK_SIGN_N,
+  Block.OAK_SIGN_S,
 }
 
 return TileEntities

@@ -1,7 +1,16 @@
 local CraftingUtil = require("scripts/minecraft/crafting_util")
 
+---@class CraftingMenu
+---@field player Player
+---@field name string
+---@field color Net.Color
+---@field recipes CraftingRecipe[]
 local CraftingMenu = {}
 
+---@param player Player
+---@param name string
+---@param recipes CraftingRecipe[]
+---@param color Net.Color
 function CraftingMenu:new(player, name, color, recipes)
   local menu = {
     posts = nil,

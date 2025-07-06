@@ -1,11 +1,11 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 
 local Climbable = {
-  Blocks.LADDER_E,
-  Blocks.LADDER_W,
-  Blocks.LADDER_N,
-  Blocks.LADDER_S,
-  Blocks.WATER_FULL,
+  Block.LADDER_E,
+  Block.LADDER_W,
+  Block.LADDER_N,
+  Block.LADDER_S,
+  Block.WATER_FULL,
 }
 
 return Climbable

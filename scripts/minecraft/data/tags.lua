@@ -1,3 +1,4 @@
+---@type table<string, string[]>
 local Tags = {
   ["#logs"] = { "OAK_LOG", "BIRCH_LOG", "SPRUCE_LOG", "JUNGLE_LOG", "DARK_OAK_LOG", "ACACIA_LOG" },
   ["#planks"] = { "OAK_PLANKS", "BIRCH_PLANKS", "SPRUCE_PLANKS", "JUNGLE_PLANKS", "DARK_OAK_PLANKS", "ACACIA_PLANKS" },

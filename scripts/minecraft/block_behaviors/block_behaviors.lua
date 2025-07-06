@@ -1,11 +1,12 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 local Tags = require("scripts/minecraft/data/tags")
 local Liquids = require("scripts/minecraft/data/liquids")
 local Helpers = require("scripts/minecraft/block_behaviors/helpers")
 
+---@type table<Block, fun(world: World, int_x: number, int_y: number, int_z: number, block_id: number?)>
 local BlockBehaviors = {
-  [Blocks.GRASS_BLOCK] = require("scripts/minecraft/block_behaviors/grass_block"),
-  [Blocks.OAK_SAPLING] = require("scripts/minecraft/block_behaviors/oak_sapling"),
+  [Block.GRASS_BLOCK] = require("scripts/minecraft/block_behaviors/grass_block"),
+  [Block.OAK_SAPLING] = require("scripts/minecraft/block_behaviors/oak_sapling"),
 }
 
 -- leaves

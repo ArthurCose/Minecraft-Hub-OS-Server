@@ -1,3 +1,13 @@
+---@class PlayerMirror
+---@field bot_id Net.ActorId
+---@field player Player
+---@field avatar Net.TextureAnimationPair
+---@field screen_x number
+---@field screen_y number
+---@field screen_z number
+---@field target_screen_x number
+---@field target_screen_y number
+---@field target_z number
 local PlayerMirror = {}
 
 local TICKS_PER_SECOND = 20
@@ -10,33 +20,37 @@ local function screen_to_world(x, y)
   return (2 * y + x) * .5, (2 * y - x) * .5
 end
 
-function PlayerMirror:new(area_id, player_id, x, y, z, warp_in)
-  local avatar = Net.get_player_avatar(player_id)
+---@param player Player
+function PlayerMirror:new(area_id, player, warp_in)
+  local avatar = Net.get_player_avatar(player.id)
 
   local bot_id = Net.create_bot({
-    name = Net.get_player_name(player_id),
+    name = Net.get_player_name(player.id),
     area_id = area_id,
     warp_in = warp_in,
     texture_path = avatar.texture_path,
     animation_path = avatar.animation_path,
-    x = x,
-    y = y,
-    z = z,
-    direction = Net.get_player_direction(player_id)
+    x = player.x,
+    y = player.y,
+    z = player.z,
+    direction = Net.get_player_direction(player.id)
   })
   Net.set_bot_map_color(bot_id, { r = 255, g = 255, b = 0 })
 
-  local screen_x, screen_y = world_to_screen(x, y)
+  local screen_x, screen_y = world_to_screen(player.x, player.y)
 
+  ---@type PlayerMirror
   local player_mirror = {
     bot_id = bot_id,
-    player_id = player_id,
+    player = player,
+    avatar = player.avatar,
+    player_id = player.id,
     screen_x = screen_x,
     screen_y = screen_y,
-    screen_z = z,
+    screen_z = player.z,
     target_screen_x = screen_x,
     target_screen_y = screen_y,
-    target_z = z,
+    target_z = player.z,
   }
 
   setmetatable(player_mirror, self)
@@ -90,7 +104,7 @@ function PlayerMirror:tick()
 
   local world_x, world_y = screen_to_world(self.screen_x, self.screen_y)
   Net.move_bot(self.bot_id, world_x, world_y, self.screen_z)
-  Net.set_bot_direction(self.bot_id, Net.get_player_direction(self.player_id))
+  Net.set_bot_direction(self.bot_id, Net.get_player_direction(self.player.id))
 end
 
 function PlayerMirror:handle_player_move(x, y, z)

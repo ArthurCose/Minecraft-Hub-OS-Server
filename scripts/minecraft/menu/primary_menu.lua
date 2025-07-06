@@ -2,9 +2,13 @@ local MenuColors = require("scripts/minecraft/menu/menu_colors")
 local InventoryMenu = require("scripts/minecraft/menu/inventory_menu")
 local PlayerActions = require("scripts/minecraft/player_actions")
 
+---@class PrimaryMenu
+---@field player Player
 local PrimaryMenu = {}
 
+---@param player Player
 function PrimaryMenu:new(player)
+  ---@type PrimaryMenu
   local menu = {
     player = player
   }

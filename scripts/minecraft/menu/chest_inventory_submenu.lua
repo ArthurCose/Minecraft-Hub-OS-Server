@@ -1,8 +1,14 @@
 local MenuColors = require("scripts/minecraft/menu/menu_colors")
 local InventoryUtil = require("scripts/minecraft/inventory_util")
 
+---@class ChestInventorySubmenu
+---@field posts Net.BoardPost[]
+---@field player Player
+---@field tile_entity TileEntity
 local ChestInventorySubmenu = {}
 
+---@param player Player
+---@param tile_entity TileEntity
 function ChestInventorySubmenu:new(player, tile_entity)
   local menu = {
     posts = nil,

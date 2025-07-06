@@ -1,4 +1,4 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 local NoCollision = require("scripts/minecraft/data/no_collision")
 local includes = require("scripts/libs/includes")
 
@@ -11,7 +11,7 @@ local function update(world, int_x, int_y, int_z)
 
   if not includes(NoCollision, block_above) then
     -- solid block above, return to dirt
-    world:set_block(int_x, int_y, int_z, Blocks.DIRT)
+    world:set_block(int_x, int_y, int_z, Block.DIRT)
     return
   end
 
@@ -22,8 +22,8 @@ local function update(world, int_x, int_y, int_z)
   local spread_block = world:get_block(spread_x, spread_y, spread_z)
   local block_above_spread = world:get_block(spread_x, spread_y, spread_z + world.layer_diff)
 
-  if spread_block == Blocks.DIRT and includes(NoCollision, block_above_spread) then
-    world:set_block(spread_x, spread_y, spread_z, Blocks.GRASS_BLOCK)
+  if spread_block == Block.DIRT and includes(NoCollision, block_above_spread) then
+    world:set_block(spread_x, spread_y, spread_z, Block.GRASS_BLOCK)
   end
 
   -- todo: death, need to handle transparent blocks

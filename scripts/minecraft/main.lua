@@ -3,6 +3,7 @@ local Player = require("scripts/minecraft/player")
 local Saves = require("scripts/minecraft/saves")
 
 local world = World:new("default")
+---@type table<Net.ActorId, Player>
 local players = {}
 
 -- five minutes

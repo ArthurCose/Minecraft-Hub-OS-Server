@@ -1,4 +1,4 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 local Tags = require("scripts/minecraft/data/tags")
 local Helpers = require("scripts/minecraft/block_behaviors/helpers")
 local includes = require("scripts/libs/includes")
@@ -87,7 +87,7 @@ local function update(world, int_x, int_y, int_z)
   end
 
   -- decay
-  world:set_block(int_x, int_y, int_z, Blocks.AIR)
+  world:set_block(int_x, int_y, int_z, Block.AIR)
 end
 
 return update

@@ -1,4 +1,4 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 local BlockLoot = require("scripts/minecraft/data/block_loot")
 local Liquids = require("scripts/minecraft/data/liquids")
 local Climbable = require("scripts/minecraft/data/climbable")
@@ -14,6 +14,28 @@ local PlayerActions = require("scripts/minecraft/player_actions")
 local Direction = require("scripts/libs/direction")
 local includes = require("scripts/libs/includes")
 
+---@class InventoryItem
+---@field id string
+---@field count number
+
+---@class Player
+---@field id Net.ActorId
+---@field instance SyncedWorldInstance
+---@field avatar Net.TextureAnimationPair
+---@field menus any[]
+---@field last_menu_count number
+---@field items InventoryItem[]
+---@field action PlayerActions
+---@field selected_item InventoryItem?
+---@field x number
+---@field y number
+---@field z number
+---@field int_x number
+---@field int_y number
+---@field int_z number
+---@field spawned boolean
+---@field changing_z boolean
+---@field floating_time number
 local Player = {}
 
 function Player:new(player_id)
@@ -40,7 +62,6 @@ function Player:new(player_id)
     spawned = false,
     changing_z = false,
     floating_time = 0,
-    textbox_promise_resolvers = {}
   }
 
   setmetatable(player, self)
@@ -141,8 +162,9 @@ function Player:handle_tile_interaction(x, y, z, button)
   end
 end
 
+---@param player Player
 local function consume_item(player)
-  local item = player.selected_item
+  local item = player.selected_item --[[@as InventoryItem]]
   item.count = item.count - 1
 
   if item.count == 0 then
@@ -188,15 +210,16 @@ function Player:get_block_direction_suffix(int_x, int_y)
   return direction_to_suffix[Net.get_player_direction(self.id)] or "_N"
 end
 
+---@param player Player
 local function place_block(player, x, y, z)
   local direction_suffix = player:get_block_direction_suffix(x, y)
-  local block_id = Blocks[player.selected_item.id .. direction_suffix] or Blocks[player.selected_item.id]
+  local block_id = Block[player.selected_item.id .. direction_suffix] or Block[player.selected_item.id]
 
   local world = player.instance.world
 
   if (includes(NoCollision, block_id) or not world:has_player_at(x, y, z)) and world:set_block(x, y, z, block_id) then
     if includes(Tags["#signs"], player.selected_item.id) then
-      local tile_entity = world:request_tile_entity(x, y, z)
+      local tile_entity = world:request_tile_entity(x, y, z) --[[@as TileEntity]]
       player:prompt(17 * 3).and_then(function(response)
         tile_entity.data.text = response
       end)
@@ -222,7 +245,7 @@ function Player:try_place_block(x, y, z)
   z = math.floor(z)
 
   local direction_suffix = self:get_block_direction_suffix(x, y)
-  local block = Blocks[self.selected_item.id .. direction_suffix] or Blocks[self.selected_item.id]
+  local block = Block[self.selected_item.id .. direction_suffix] or Block[self.selected_item.id]
 
   if not block then
     -- not placeable
@@ -235,7 +258,7 @@ function Player:try_place_block(x, y, z)
   for z_offset = -world.layer_diff, world.layer_diff, world.layer_diff do
     local block_id = world:get_block(x, y, z + z_offset)
 
-    if block_id == Blocks.AIR or includes(Liquids.Flowing, block_id) then
+    if block_id == Block.AIR or includes(Liquids.Flowing, block_id) then
       return place_block(self, x, y, z + z_offset)
     end
   end
@@ -244,11 +267,11 @@ end
 local function break_block(player, x, y, z)
   local block_id = player.instance.world:get_block(x, y, z)
 
-  if block_id == Blocks.BEDROCK or block_id == Blocks.AIR or includes(Liquids.All, block_id) then
+  if block_id == Block.BEDROCK or block_id == Block.AIR or includes(Liquids.All, block_id) then
     return false
   end
 
-  if player.instance.world:set_block(x, y, z, Blocks.AIR) then
+  if player.instance.world:set_block(x, y, z, Block.AIR) then
     local loot = BlockLoot[block_id]
 
     if #loot > 0 then
@@ -275,27 +298,27 @@ function Player:try_break_block(x, y, z)
   -- break the block at head
   local head_id = world:get_block(x, y, z + world.layer_diff)
 
-  if head_id ~= Blocks.AIR and not includes(Liquids.All, head_id) then
+  if head_id ~= Block.AIR and not includes(Liquids.All, head_id) then
     return break_block(self, x, y, z + world.layer_diff)
   end
 
   -- break the block at feet
   local feet_id = world:get_block(x, y, z)
 
-  if feet_id ~= Blocks.AIR and not includes(Liquids.All, feet_id) then
+  if feet_id ~= Block.AIR and not includes(Liquids.All, feet_id) then
     return break_block(self, x, y, z)
   end
 
   -- break the block below
   local floor_id = world:get_block(x, y, z - world.layer_diff)
-  local can_jump_through_floor = floor_id == Blocks.AIR or includes(Liquids.All, floor_id)
+  local can_jump_through_floor = floor_id == Block.AIR or includes(Liquids.All, floor_id)
 
   if not can_jump_through_floor then
     return break_block(self, x, y, z - world.layer_diff)
   end
 
   -- try jumping down
-  if head_id == Blocks.AIR and feet_id == Blocks.AIR and can_jump_through_floor then
+  if head_id == Block.AIR and feet_id == Block.AIR and can_jump_through_floor then
     self:fall_towards(float_x, float_y)
   end
 end
@@ -312,7 +335,7 @@ function Player:try_jump_up(x, y, z)
   local head_id = world:get_block(int_x, int_y, int_z + world.layer_diff)
   local ceiling_id = world:get_block(int_x, int_y, int_z + 2 * world.layer_diff)
 
-  if (feet_id ~= Blocks.AIR and not includes(Liquids.NonFull, feet_id)) and includes(NoCollision, head_id) and includes(NoCollision, ceiling_id) then
+  if (feet_id ~= Block.AIR and not includes(Liquids.NonFull, feet_id)) and includes(NoCollision, head_id) and includes(NoCollision, ceiling_id) then
     self:animate_jump_up(self.id, x, y, int_z + world.layer_diff)
   end
 
@@ -443,19 +466,19 @@ function Player:try_interact(x, y, z)
     local test_z = z + i * world.layer_diff
     local block_id = world:get_block(x, y, test_z)
 
-    if block_id == Blocks.CRAFTING_TABLE then
+    if block_id == Block.CRAFTING_TABLE then
       self:open_menu(CraftingMenu:new(self, "Crafting Table", MenuColors.CRAFTING_TABLE_COLOR,
         CraftingRecipes.CraftingTable))
       break
-    elseif block_id == Blocks.FURNACE or block_id == Blocks.FURNACE_E or block_id == Blocks.FURNACE_N then
+    elseif block_id == Block.FURNACE or block_id == Block.FURNACE_E or block_id == Block.FURNACE_N then
       self:open_menu(CraftingMenu:new(self, "Furnace", MenuColors.FURNACE_COLOR, CraftingRecipes.Furnace))
       break
-    elseif block_id == Blocks.CHEST or block_id == Blocks.CHEST_E or block_id == Blocks.CHEST_N then
-      local tile_entity = world:request_tile_entity(x, y, test_z)
+    elseif block_id == Block.CHEST or block_id == Block.CHEST_E or block_id == Block.CHEST_N then
+      local tile_entity = world:request_tile_entity(x, y, test_z) --[[@as TileEntity]]
       self:open_menu(ChestMenu:new(self, tile_entity))
       break
-    elseif block_id == Blocks.OAK_SIGN_N or block_id == Blocks.OAK_SIGN_S or block_id == Blocks.OAK_SIGN_E or block_id == Blocks.OAK_SIGN_W then
-      local tile_entity = world:request_tile_entity(x, y, test_z)
+    elseif block_id == Block.OAK_SIGN_N or block_id == Block.OAK_SIGN_S or block_id == Block.OAK_SIGN_E or block_id == Block.OAK_SIGN_W then
+      local tile_entity = world:request_tile_entity(x, y, test_z) --[[@as TileEntity]]
       self:message(tile_entity.data.text)
       break
     end

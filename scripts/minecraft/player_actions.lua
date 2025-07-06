@@ -1,3 +1,4 @@
+---@enum PlayerActions
 local PlayerActions = {
   PUNCH = 0,
   JUMP = 1,

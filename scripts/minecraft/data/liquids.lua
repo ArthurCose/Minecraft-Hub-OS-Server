@@ -1,47 +1,47 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 local append_table = require("scripts/libs/append_table")
 local includes = require("scripts/libs/includes")
 
 local Liquids = {
   Water = {
-    Blocks.WATER_FULL,
-    Blocks.WATER_8,
-    Blocks.WATER_7,
-    Blocks.WATER_6,
-    Blocks.WATER_5,
-    Blocks.WATER_4,
-    Blocks.WATER_3,
-    Blocks.WATER_2,
-    Blocks.WATER_1,
+    Block.WATER_FULL,
+    Block.WATER_8,
+    Block.WATER_7,
+    Block.WATER_6,
+    Block.WATER_5,
+    Block.WATER_4,
+    Block.WATER_3,
+    Block.WATER_2,
+    Block.WATER_1,
   },
   FlowingWater = {
-    Blocks.WATER_FULL,
-    Blocks.WATER_7,
-    Blocks.WATER_6,
-    Blocks.WATER_5,
-    Blocks.WATER_4,
-    Blocks.WATER_3,
-    Blocks.WATER_2,
-    Blocks.WATER_1,
+    Block.WATER_FULL,
+    Block.WATER_7,
+    Block.WATER_6,
+    Block.WATER_5,
+    Block.WATER_4,
+    Block.WATER_3,
+    Block.WATER_2,
+    Block.WATER_1,
   },
   Lava = {
-    Blocks.LAVA_FULL,
-    Blocks.LAVA_4,
-    Blocks.LAVA_3,
-    Blocks.LAVA_2,
-    Blocks.LAVA_1,
+    Block.LAVA_FULL,
+    Block.LAVA_4,
+    Block.LAVA_3,
+    Block.LAVA_2,
+    Block.LAVA_1,
   },
   FlowingLava = {
-    Blocks.LAVA_FULL,
-    Blocks.LAVA_3,
-    Blocks.LAVA_2,
-    Blocks.LAVA_1,
+    Block.LAVA_FULL,
+    Block.LAVA_3,
+    Block.LAVA_2,
+    Block.LAVA_1,
   },
   All = {},
   Flowing = {},
   Full = {
-    Blocks.LAVA_FULL,
-    Blocks.WATER_FULL
+    Block.LAVA_FULL,
+    Block.WATER_FULL
   },
   NonFull = {}
 }

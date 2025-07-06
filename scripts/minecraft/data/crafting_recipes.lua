@@ -1,5 +1,9 @@
 local append_table = require("scripts/libs/append_table")
 
+---@class CraftingRecipe
+---@field result InventoryItem
+---@field required InventoryItem[]
+
 local CraftingRecipes = {
   Inventory = {
     { -- temporary recipe? stone cutter in the future

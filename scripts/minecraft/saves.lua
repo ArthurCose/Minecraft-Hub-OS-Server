@@ -1,19 +1,21 @@
-local Blocks = require("scripts/minecraft/data/blocks")
+local Block = require("scripts/minecraft/data/block")
 local json = require("scripts/libs/json")
 
 local Saves = {}
 
+---@param world World
+---@param interval number in seconds
+---@param path string
 function Saves.save_every(world, interval, path)
   local save_loop
 
-  save_loop = function ()
+  save_loop = function()
     Async.sleep(interval).and_then(function()
       print("Saving world...")
 
       local content = json.encode(world.data)
 
       Async.write_file(path, content).and_then(function()
-
         print("World saved")
         save_loop()
       end)
@@ -33,6 +35,8 @@ local function create_translator(old_dict, new_dict)
   return translator
 end
 
+---@param world World
+---@param path string
 function Saves.load(world, path)
   Async.read_file(path).and_then(function(content)
     if content == "" then
@@ -42,8 +46,8 @@ function Saves.load(world, path)
 
     world.data = json.decode(content)
 
-    local translator = create_translator(world.data.block_dictionary, Blocks)
-    world.data.block_dictionary = Blocks
+    local translator = create_translator(world.data.block_dictionary, Block)
+    world.data.block_dictionary = Block
 
     -- translate using the block dictionary
     for layerIndex, layer in ipairs(world.data.blocks) do
@@ -56,10 +60,10 @@ function Saves.load(world, path)
             local y = rowIndex - 1
             local z = layerIndex * world.layer_diff
 
-            print("Failed to translate " .. row[col] .. " at (" .. x .. ", " .. y .. ", " .. z.. ")")
+            print("Failed to translate " .. row[col] .. " at (" .. x .. ", " .. y .. ", " .. z .. ")")
 
             -- use an air block
-            row[col] = Blocks.AIR
+            row[col] = Block.AIR
           else
             row[col] = new_id
           end

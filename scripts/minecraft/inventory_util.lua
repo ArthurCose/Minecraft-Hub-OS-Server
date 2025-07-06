@@ -6,6 +6,9 @@ local includes = require("scripts/libs/includes")
 local InventoryUtil = {}
 
 -- defaults to adding one item
+---@param items InventoryItem[]
+---@param item_id string
+---@param count number?
 function InventoryUtil.add_item(items, item_id, count)
   if item_id == nil then
     return
@@ -27,6 +30,9 @@ function InventoryUtil.add_item(items, item_id, count)
 end
 
 -- defaults to removing one item, returns true if anything is removed
+---@param items InventoryItem[]
+---@param item_id string
+---@param count number?
 function InventoryUtil.remove_item(items, item_id, count)
   count = count or 1
 
@@ -79,6 +85,9 @@ function InventoryUtil.remove_item(items, item_id, count)
 end
 
 -- defaults to testing for a minimum of one item
+---@param items InventoryItem[]
+---@param item_id string
+---@param count number
 function InventoryUtil.has_item(items, item_id, count)
   count = count or 1
 
@@ -109,12 +118,16 @@ function InventoryUtil.has_item(items, item_id, count)
   return false
 end
 
+---@param items InventoryItem[]
+---@param posts Net.BoardPost[]
 function InventoryUtil.generate_item_posts(items, posts)
   for _, item in ipairs(items) do
-    posts[#posts + 1] = { id = item.id, read = true, title = item.id, author = item.count }
+    posts[#posts + 1] = { id = item.id, read = true, title = item.id, author = item.count --[[@as string]] }
   end
 end
 
+---@param posts Net.BoardPost[]
+---@param item InventoryItem
 local function find_matching_post_index(posts, item, start_index)
   for i = start_index, #posts do
     if posts[i].id == item.id then
@@ -125,6 +138,10 @@ local function find_matching_post_index(posts, item, start_index)
   return -1
 end
 
+---@param player Player
+---@param items InventoryItem[]
+---@param posts Net.BoardPost[]
+---@param start_offset number
 function InventoryUtil.sync_inventory_menu(player, items, posts, start_offset)
   local pre_first_post_id = posts[start_offset] and posts[start_offset].id
   local last_post_id = pre_first_post_id
@@ -169,7 +186,7 @@ function InventoryUtil.sync_inventory_menu(player, items, posts, start_offset)
 
     if post.author ~= item.count then
       -- update count
-      post.author = item.count
+      post.author = item.count --[[@as string]]
       Net.append_posts(player.id, { { id = "temp", read = true } }, post.id)
       Net.remove_post(player.id, post.id)
       Net.append_posts(player.id, { post }, "temp")
