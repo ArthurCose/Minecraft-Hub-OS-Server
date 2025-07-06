@@ -31,9 +31,9 @@ local Blocks = {
   DARK_OAK_LEAVES = 33,
   ACACIA_LOG = 34,
   ACACIA_LEAVES = 35,
-  LADDER_E = 36,
+  LADDER_W = 36,
   LADDER_N = 37,
-  LADDER_W = 38,
+  LADDER_E = 38,
   LADDER_S = 39,
 
   COAL_ORE = 40,
@@ -75,12 +75,12 @@ local Blocks = {
   GLASS = 79,
 
   OAK_PLANKS = 80,
-  OAK_STAIRS_E = 81,
+  OAK_STAIRS_W = 81,
   OAK_STAIRS_N = 82,
-  OAK_STAIRS_W = 83,
+  OAK_STAIRS_E = 83,
   OAK_STAIRS_S = 84,
-  OAK_SIGN_E = 85,
   OAK_SIGN_W = 85,
+  OAK_SIGN_E = 85,
   OAK_SIGN_N = 86,
   OAK_SIGN_S = 86,
 

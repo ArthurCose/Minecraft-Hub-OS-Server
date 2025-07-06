@@ -164,19 +164,28 @@ function Player:get_interaction_position(start_x, start_y, start_z)
   return pos
 end
 
+local direction_to_suffix = {
+  [Direction.UP_RIGHT] = "_N",
+  [Direction.RIGHT] = "_N",
+  [Direction.DOWN_RIGHT] = "_E",
+  [Direction.DOWN_LEFT] = "_S",
+  [Direction.LEFT] = "_W",
+  [Direction.UP_LEFT] = "_W",
+}
+
 function Player:get_block_direction_suffix(int_x, int_y)
-  if self.int_x > int_x then
-    return "_E"
-  elseif self.int_y > int_y then
+  if self.int_y > int_y then
     return "_N"
   elseif self.int_x < int_x then
-    return "_W"
+    return "_E"
   elseif self.int_y < int_y then
     return "_S"
+  elseif self.int_x > int_x then
+    return "_W"
   end
 
-  -- pick a nice direction in case there's no directionless version
-  return "_N"
+  -- try using the player's facing direction or fall back to north
+  return direction_to_suffix[Net.get_player_direction(self.id)] or "_N"
 end
 
 local function place_block(player, x, y, z)
