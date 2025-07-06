@@ -170,7 +170,7 @@ function InventoryUtil.sync_inventory_menu(player, items, posts, start_offset)
     if post.author ~= item.count then
       -- update count
       post.author = item.count
-      Net.prepend_posts(player.id, { { id = "temp", read = true } }, post.id)
+      Net.append_posts(player.id, { { id = "temp", read = true } }, post.id)
       Net.remove_post(player.id, post.id)
       Net.append_posts(player.id, { post }, "temp")
       Net.remove_post(player.id, "temp")

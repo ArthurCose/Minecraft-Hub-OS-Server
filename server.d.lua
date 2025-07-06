@@ -833,20 +833,20 @@ function Net.prompt_player(player_id, character_limit, default_text) end
 ---@param player_id Net.ActorId
 ---@param board_name string
 ---@param color Net.Color
----@param posts Net.BoardPost
+---@param posts Net.BoardPost[]
 ---@param open_instantly? boolean
 ---@return Net.EventEmitter
 function Net.open_board(player_id, board_name, color, posts, open_instantly) end
 
 --- Issues may arise when multiple scripts create boards at the same time.
 ---@param player_id Net.ActorId
----@param posts Net.BoardPost
+---@param posts Net.BoardPost[]
 ---@param post_id? string
 function Net.prepend_posts(player_id, posts, post_id) end
 
 --- Issues may arise when multiple scripts create boards at the same time.
 ---@param player_id Net.ActorId
----@param posts Net.BoardPost
+---@param posts Net.BoardPost[]
 ---@param post_id? string
 function Net.append_posts(player_id, posts, post_id) end
 
@@ -917,6 +917,13 @@ function Net.set_player_map_color(player_id, color) end
 ---@param bot_id Net.ActorId
 ---@param color Net.Color
 function Net.set_bot_map_color(bot_id, color) end
+
+--- Sends a link to the player to open in the browser. Permission will be asked before opening.
+---
+--- Supports `http://` and `https://` protocols.
+---@param player_id Net.ActorId
+---@param address string
+function Net.refer_link(player_id, address) end
 
 --- Opens a menu for the player to save the referred server.
 ---@param player_id Net.ActorId
