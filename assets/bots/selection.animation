@@ -21,10 +21,10 @@ frame duration="0.05" x="0" y="32" w="30" h="32" originx="15" originy="27" flipx
 animation state="BREAK_0_S"
 frame duration="0.05" x="30" y="32" w="30" h="32" originx="15" originy="27" flipx="0" flipy="0"
 
-animation state="BREAK_0_E"
+animation state="BREAK_0_W"
 frame duration="0.05" x="0" y="32" w="30" h="32" originx="15" originy="27" flipx="1" flipy="0"
 
-animation state="BREAK_0_W"
+animation state="BREAK_0_E"
 frame duration="0.05" x="30" y="32" w="30" h="32" originx="15" originy="27" flipx="1" flipy="0"
 
 animation state="BREAK_2_N"
@@ -33,8 +33,8 @@ frame duration="0.05" x="0" y="32" w="30" h="32" originx="15" originy="40" flipx
 animation state="BREAK_2_S"
 frame duration="0.05" x="30" y="32" w="30" h="32" originx="15" originy="40" flipx="0" flipy="0"
 
-animation state="BREAK_2_E"
+animation state="BREAK_2_W"
 frame duration="0.05" x="0" y="32" w="30" h="32" originx="15" originy="40" flipx="1" flipy="0"
 
-animation state="BREAK_2_W"
+animation state="BREAK_2_E"
 frame duration="0.05" x="30" y="32" w="30" h="32" originx="15" originy="40" flipx="1" flipy="0"
